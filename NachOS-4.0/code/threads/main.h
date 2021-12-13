@@ -14,6 +14,7 @@
 
 extern Kernel *kernel;
 extern Debug *debug;
+extern FileSystem *fileSystem;
 
 #endif // MAIN_H
 
