@@ -39,6 +39,7 @@ ConsoleInput::ConsoleInput(char *readFile, CallBackObj *toCall)
     // start polling for incoming keystrokes
     kernel->interrupt->Schedule(this, ConsoleTime, ConsoleReadInt);
     // hello lee quang
+    // lee
 }
 
 //----------------------------------------------------------------------
