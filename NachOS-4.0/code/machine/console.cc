@@ -36,7 +36,7 @@ ConsoleInput::ConsoleInput(char *readFile, CallBackObj *toCall)
     callWhenAvail = toCall;
     incoming = EOF;
 
-    // start polling for incoming keystrokes
+    // start polling for incoming keystrokes...
     kernel->interrupt->Schedule(this, ConsoleTime, ConsoleReadInt);
 }
 
