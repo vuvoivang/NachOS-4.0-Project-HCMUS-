@@ -53,6 +53,8 @@
 #define MAX_LENGTH_STRING 2147483647
 #define INT_MIN -2147483647
 #define INT_MAX 2147483647
+
+#define MAX_LENGTH_FILENAME 32
 void increasePC()
 {
   /* set previous programm counter (debugging only)*/
@@ -549,6 +551,44 @@ void ExceptionHandler(ExceptionType which)
       // muc dich: in ra console 1 ki tu char
       char c = kernel->machine->ReadRegister(4);
       kernel->synchConsoleOut->PutChar(c);
+      increasePC();
+      return;
+    }
+    // project 2
+    case SC_CreateFile:
+    {
+      // input: dia chi cua filename o userspace
+      // output: 0 = thanh cong, -1 = loi
+      // muc dich: tao file voi filename duoc truyen vao
+      int virAddr;
+      char *filename;
+      DEBUG(dbgFile,"\n SC_CreateFile call ...");
+      DEBUG(dbgFile,"\n Reading virtual address of filename");
+
+      virAddr = kernel->machine->ReadRegister(4);
+      DEBUG (dbgFile,"\n Reading filename.");
+      filename = User2System(virAddr,MAX_LENGTH_FILENAME);
+      if(filename == NULL){
+        printf("\n Not enough memory in system");
+        DEBUG(dbgFile,"\n Not enough memory in system");
+        kernel->machine->WriteRegister(2,-1); // tra ve Loi cho chuong trinh nguoi dung
+        increasePC();
+        return;
+      }
+      DEBUG(dbgFile,"\n Finish reading filename.");
+
+      // create file
+      if(!fileSystem->Create(filename)){
+        printf("\n Error create file '%s'",filename);
+        kernel->machine->WriteRegister(2,-1);
+        delete filename;
+        increasePC();
+        return;
+      }
+
+      // create file thanh cong
+      kernel->machine->WriteRegister(2,0);
+      delete filename;
       increasePC();
       return;
     }
