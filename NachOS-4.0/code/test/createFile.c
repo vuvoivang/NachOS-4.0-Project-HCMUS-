@@ -3,7 +3,7 @@
 
 int main()
 {
-  char *filename="taofile_aloalo.txt";
+  char *filename="fileydam.txt";
   
   if(CreateFile(filename)==0){
     PrintString("Tao file thanh cong nhe!");
