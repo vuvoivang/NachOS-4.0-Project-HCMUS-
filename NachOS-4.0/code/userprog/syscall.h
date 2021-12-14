@@ -68,10 +68,6 @@ void PrintString(char buffer[]);
 
 /* Stop Nachos, and print out performance stats */
 void Halt();		
-
-
-
-
  
 /*
  * Add the two operants and return the result
@@ -139,7 +135,7 @@ int Remove(char *name);
 /* Open the Nachos file "name", and return an "OpenFileId" that can 
  * be used to read and write to the file.
  */
-OpenFileId Open(char *name);
+OpenFileId Open(char *name,int type);
 
 /* Write "size" bytes from "buffer" to the open file. 
  * Return the number of bytes actually read on success.

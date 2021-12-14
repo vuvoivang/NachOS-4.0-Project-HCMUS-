@@ -38,10 +38,10 @@
 #include "sysdep.h"
 
 #define MAX_FILE_OPEN 10
-#define INPUT_TYPE 0
-#define OUTPUT_TYPE 1
-#define READONLY_TYPE 2
-#define READWRITE_TYPE 3
+#define INPUT_TYPE 2 // nhap tu ban phim  2
+#define OUTPUT_TYPE 3 // in ra console  3
+#define READONLY_TYPE 1  //0
+#define READWRITE_TYPE 0 //1
 
 #ifdef FILESYS_STUB
 // #ifdef FILESYS_STUB // Temporarily implement file system calls as
@@ -60,8 +60,8 @@ public:
     this->Create("stdin");
     this->Create("stdout");
 
-    fileTable[0] = this->Open("stdin", INPUT_TYPE);
-    fileTable[1] = this->Open("stdout", OUTPUT_TYPE);
+    fileTable[1] = this->Open("stdin", INPUT_TYPE);
+    fileTable[0] = this->Open("stdout", OUTPUT_TYPE);
   }
   // define destructor
   ~FileSystem() {
@@ -94,7 +94,7 @@ public:
   OpenFile *Open(char *name, int type) {
     int fileDescriptor;
 
-    if (type == INPUT_TYPE)
+    if (type == INPUT_TYPE) // user ghi-write  kernel -> doc du lieu nay->read
       fileDescriptor = OpenForWrite(name);
     else if (type == OUTPUT_TYPE || type == READONLY_TYPE)
       fileDescriptor = OpenForRead(name, FALSE);
