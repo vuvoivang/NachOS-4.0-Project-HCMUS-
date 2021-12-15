@@ -666,7 +666,186 @@ void ExceptionHandler(ExceptionType which)
       increasePC();
       break;
     }
+    case SC_Read:
+		{
+			// Input: buffer(char*), so ky tu(int), id cua file(OpenFileID)
+			// Output: -1: Loi, So byte read thuc su: Thanh cong, -2: Thanh cong
+			// Cong dung: Doc file voi tham so la buffer, so ky tu cho phep va id cua file
+      int virAddr;  //chua dia chi chuoi buffer
+      int charcount;  // chua charcount la so ky tu duoc doc
+      int id; // id cua file
+        
+			int curPosition;
+			int newPosition;
+			char *buffer;
+      int readBytes;
 
+      DEBUG(dbgFile, "\n SC_Read call ...");
+      DEBUG(dbgFile, "\n Reading virtual address of buffer");
+      virAddr = kernel->machine->ReadRegister(4);
+      DEBUG(dbgFile, "\n Reading charcount.");
+			charcount = kernel->machine->ReadRegister(5); 
+      DEBUG(dbgFile, "\n Reading id.");
+			id = kernel->machine->ReadRegister(6); 
+
+      // Kiem tra file id co hop le 
+      if (id < 0 || id > 9)
+			{
+				printf("\nInvalid file id.");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+			}
+    
+			
+			// Kiem tra file co ton tai khong
+			if (fileSystem->fileTable[id] == NULL)
+			{
+				printf("\nFile does not exist in file table");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+      }
+
+			// Truong hop doc file stdin (id la 1)
+			if (id == 1)
+			{
+				printf("\nCan't read file stdout.");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+			}
+
+      // Truong hop file doc duoc
+
+			curPosition = fileSystem->fileTable[id]->getCurrentOffset(); // Lay vi tri current position
+			buffer = User2System(virAddr, charcount); // Copy tu User Space sang System Space voi buffer dai charcount byte
+
+			// Truong hop doc file stdin (id la 0)
+			if (id == 0)
+			{
+				// Su dung ham Read cua lop SynchConsole de tra ve so byte thuc su doc duoc
+
+				int size = gSynchConsole->Read(buffer, charcount); 
+				System2User(virAddr, size, buffer); // Copy chuoi tu vung nho System Space sang User Space voi buffer co do dai la size (so byte thuc su doc duoc)
+				kernel->machine->WriteRegister(2, size); // Tra ve so byte thuc su doc duoc
+				delete buffer;
+				increasePC();
+				return;
+			}
+
+			// Truong hop doc file binh thuong
+			if ((fileSystem->fileTable[id]->Read(buffer, charcount)) > 0)
+			{
+				// So byte thuc su = newPosition - curPosition
+				newPosition = fileSystem->fileTable[id]->getCurrentOffset();
+				// Copy chuoi tu vung nho System Space sang User Space voi buffer co do dai la readBytes (so byte that su da doc)
+        readBytes = newPosition - curPosition;
+				System2User(virAddr, readBytes , buffer); 
+
+				kernel->machine->WriteRegister(2, readBytes);
+			}
+			else
+			{
+				// Truong hop con lai: doc va cham toi cuoi file tra ve -2
+				
+				kernel->machine->WriteRegister(2, -2);
+			}
+			delete buffer;
+			increasePC();
+			return;
+		}
+
+		case SC_Write:
+		{
+			// Input: buffer(char*), so ky tu(int), id cua file(OpenFileID)
+			// Output: -1: Loi, So byte write thuc su: Thanh cong, -2: Thanh cong
+			// Cong dung: Ghi file voi tham so la buffer, so ky tu cho phep va id cua file
+			int virAddr;  //chua dia chi chuoi buffer
+      int charcount;  // chua charcount la so ky tu duoc doc
+      int id; // id cua file
+        
+			int curPosition;
+			int newPosition;
+			char *buffer;
+      int readBytes;
+
+      DEBUG(dbgFile, "\n SC_Read call ...");
+      DEBUG(dbgFile, "\n Reading virtual address of buffer");
+      virAddr = kernel->machine->ReadRegister(4);
+      DEBUG(dbgFile, "\n Reading charcount.");
+			charcount = kernel->machine->ReadRegister(5); 
+      DEBUG(dbgFile, "\n Reading id.");
+			id = kernel->machine->ReadRegister(6); 
+
+      // Kiem tra file id co hop le 
+      if (id < 0 || id > 9)
+			{
+				printf("\nInvalid file id.");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+			}
+    
+			
+			// Kiem tra file co ton tai khong
+			if (fileSystem->fileTable[id] == NULL)
+			{
+				printf("\nFile does not exist in file table");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+      }
+
+
+			// Xet truong hop ghi vao file only read hoac file stdin thi tra ve -1
+			if (fileSystem->fileTable[id]->getType() == READONLY_TYPE || id == 0)
+			{
+				printf("\nCan't write in file stdin or file only read.");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+			}
+
+			curPosition = fileSystem->fileTable[id]->getCurrentOffset(); // Kiem tra thanh cong thi lay vi tri curPosition
+			buffer = User2System(virAddr, charcount);  // Copy vung nho User Space sang System Space voi buffer dai charcount bytes
+			
+      // Xet truong hop ghi file read & write thi tra ve so byte thuc su
+			if (fileSystem->fileTable[id]->getType() == READWRITE_TYPE)
+			{
+				if ((fileSystem->fileTable[id]->Write(buffer, charcount)) > 0)
+				{
+					// So byte thuc su = newPosition - curPosition
+					newPosition = fileSystem->fileTable[id]->getCurrentOffset();
+
+					kernel->machine->WriteRegister(2, newPosition - curPosition);
+					delete buffer;
+					increasePC();
+					return;
+				}
+			}
+			if (id == 2) // Xet truong hop file stdout
+			{
+				int pos = 0;
+
+				while (buffer[pos] != 0 && buffer[pos] != '\n') // Duyet den ky tu \n trong stdout
+				{
+
+          // write moi byte trong file ra sdt out
+					gSynchConsole->Write(buffer + pos, 1); // Su dung ham Write cua lop SynchConsole 	
+          // den byte tiep theo
+          pos++;
+				}
+
+				buffer[pos] = '\n';
+				gSynchConsole->Write(buffer + pos, 1); // Write ky tu '\n'
+
+				kernel->machine->WriteRegister(2, pos - 1); // Tra ve so byte thuc su write duoc
+				delete buffer;
+				increasePC();
+				return;
+			}
+		}
     default:
       cerr << "Unexpected system call " << type << "\n";
       break;
