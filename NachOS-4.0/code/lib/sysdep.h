@@ -46,6 +46,7 @@ extern bool PollFile(int fd);
 // For simulating the disk and the console devices.
 extern int OpenForWrite(char *name);
 extern int OpenForReadWrite(char *name, bool crashOnError);
+extern int OpenForRead(char *name, bool crashOnError); // them vao
 extern void Read(int fd, char *buffer, int nBytes);
 extern int ReadPartial(int fd, char *buffer, int nBytes);
 extern void WriteFile(int fd, char *buffer, int nBytes);

@@ -53,6 +53,8 @@
 #define MAX_LENGTH_STRING 2147483647
 #define INT_MIN -2147483647
 #define INT_MAX 2147483647
+
+#define MAX_LENGTH_FILENAME 32
 void increasePC()
 {
   /* set previous programm counter (debugging only)*/
@@ -552,12 +554,125 @@ void ExceptionHandler(ExceptionType which)
       increasePC();
       return;
     }
+    // project 2
+    case SC_CreateFile:
+    {
+      // input: dia chi cua filename o userspace
+      // output: 0 = thanh cong, -1 = loi
+      // muc dich: tao file voi filename duoc truyen vao
+      int virAddr;
+      char *filename;
+      DEBUG(dbgFile, "\n SC_CreateFile call ...");
+      DEBUG(dbgFile, "\n Reading virtual address of filename");
+
+      virAddr = kernel->machine->ReadRegister(4);
+      DEBUG(dbgFile, "\n Reading filename.");
+      filename = User2System(virAddr, MAX_LENGTH_FILENAME);
+      if (filename == NULL)
+      {
+        printf("\n Not enough memory in system");
+        DEBUG(dbgFile, "\n Not enough memory in system");
+        kernel->machine->WriteRegister(2, -1); // tra ve Loi cho chuong trinh nguoi dung
+        increasePC();
+        return;
+      }
+      DEBUG(dbgFile, "\n Finish reading filename.");
+
+      // create file
+      if (!fileSystem->Create(filename))
+      {
+        printf("\n Error create file '%s'", filename);
+        kernel->machine->WriteRegister(2, -1);
+        delete filename;
+        increasePC();
+        return;
+      }
+
+      // create file thanh cong
+      kernel->machine->WriteRegister(2, 0);
+      delete filename;
+      increasePC();
+      return;
+    }
+    case SC_Open:
+    {
+      OpenFile *file;
+      int virAddr;
+      int type;
+      char *fileName;
+      int freeSlot;
+      virAddr = kernel->machine->ReadRegister(4);
+      type = kernel->machine->ReadRegister(5);
+
+      fileName = User2System(virAddr, MAX_LENGTH_FILENAME);
+
+      freeSlot = fileSystem->FindFreeSlot();
+      // cout<<freeSlot;
+      if (type == INPUT_TYPE)
+      {
+        // input console stdin
+        kernel->machine->WriteRegister(2, 0);
+      }
+      else if (type == OUTPUT_TYPE)
+      {
+        //output console stdout
+        kernel->machine->WriteRegister(2, 1);
+      }
+      if (freeSlot != -1)
+      {
+        file = fileSystem->Open(fileName, type);
+        if (file != NULL)
+        {
+          fileSystem->fileTable[freeSlot] = file;
+          kernel->machine->WriteRegister(2, freeSlot);
+        }
+        delete[] fileName;
+        increasePC();
+        return;
+      }
+
+      delete[] fileName;
+      increasePC();
+      break;
+    }
+    case SC_Close:
+    {
+      int file_Id;
+      file_Id = -1;
+      file_Id = kernel->machine->ReadRegister(4);
+
+      if (file_Id >= 0 && file_Id <= 9)
+      {
+
+        if (fileSystem->fileTable[file_Id] != NULL)
+        {
+
+          delete fileSystem->fileTable[file_Id];
+
+          fileSystem->fileTable[file_Id] = NULL;
+
+          kernel->machine->WriteRegister(2, 0);
+
+          increasePC();
+          return;
+        }
+        else{
+          kernel->machine->WriteRegister(2, -1);
+           increasePC();
+           return;
+        }
+      }
+      kernel->machine->WriteRegister(2, -1);
+      increasePC();
+      break;
+    }
 
     default:
       cerr << "Unexpected system call " << type << "\n";
       break;
     }
     break;
+
   default:
     cerr << "Unexpected user mode exception" << (int)which << "\n";
     break;
