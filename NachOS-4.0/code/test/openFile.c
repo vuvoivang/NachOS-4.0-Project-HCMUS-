@@ -7,18 +7,18 @@ int main()
     int type;
     int file_id;
     filename="fileydam.txt";
-    type=1;
-    file_id=3;
+    type=0;
+    // file_id=2;
     
-    // file_id=Open(filename,type);
-    // if(file_id!=-1){
-    //     PrintString("Mo file thanh cong nhe!");
+    file_id=Open(filename,type);
+    if(file_id!=-1){
+        PrintString("Mo file thanh cong nhe!");
        
-    // }
-    // else{
-    //      PrintString("Mo file that bai nhe!");
-    // }
-    // PrintNum(file_id);
+    }
+    else{
+         PrintString("Mo file that bai nhe!");
+    }
+    PrintNum(file_id);
 
     if(Close(file_id)!=-1){
         PrintString("Dong File thanh cong");

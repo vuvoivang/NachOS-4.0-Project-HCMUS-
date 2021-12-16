@@ -610,12 +610,14 @@ void ExceptionHandler(ExceptionType which)
       // cout<<freeSlot;
       if (type == INPUT_TYPE)
       {
-        // input console stdin
+        // input console stdin ->system doc gia tri tren man hinh console
+        // thong bao day
         kernel->machine->WriteRegister(2, 0);
       }
       else if (type == OUTPUT_TYPE)
       {
-        //output console stdout
+        // thong bao
+        //output console stdout -> system xuat ra cho nguoi dung xem tren console
         kernel->machine->WriteRegister(2, 1);
       }
       if (freeSlot != -1)
@@ -630,7 +632,8 @@ void ExceptionHandler(ExceptionType which)
         increasePC();
         return;
       }
-
+      kernel->machine->WriteRegister(2, -1);
+      // print ko tim dc
       delete[] fileName;
       increasePC();
       break;
@@ -641,7 +644,7 @@ void ExceptionHandler(ExceptionType which)
       file_Id = -1;
       file_Id = kernel->machine->ReadRegister(4);
 
-      if (file_Id >= 0 && file_Id <= 9)
+      if (file_Id >= 2 && file_Id <= 9)
       {
 
         if (fileSystem->fileTable[file_Id] != NULL)
@@ -662,6 +665,7 @@ void ExceptionHandler(ExceptionType which)
            return;
         }
       }
+      // xet them 2 TH 0,1 roi thong bao
       kernel->machine->WriteRegister(2, -1);
       increasePC();
       break;

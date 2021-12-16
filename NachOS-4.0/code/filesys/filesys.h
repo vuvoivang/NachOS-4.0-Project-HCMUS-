@@ -38,10 +38,10 @@
 #include "sysdep.h"
 
 #define MAX_FILE_OPEN 10
-#define INPUT_TYPE 2 // nhap tu ban phim  2
-#define OUTPUT_TYPE 3 // in ra console  3
-#define READONLY_TYPE 1  //0
-#define READWRITE_TYPE 0 //1
+#define INPUT_TYPE 2 // nhap tu ban phim  2 
+#define OUTPUT_TYPE 3 // in ra console  3 -
+#define READONLY_TYPE 1  //0 
+#define READWRITE_TYPE 0 //1   
 
 #ifdef FILESYS_STUB
 // #ifdef FILESYS_STUB // Temporarily implement file system calls as
@@ -57,9 +57,11 @@ public:
     for (int i = 0; i < MAX_FILE_OPEN; i++) {
       fileTable[i] = NULL;
     }
+    // luon luon ton tai
     this->Create("stdin");
     this->Create("stdout");
 
+// luon luon mo file input output
     fileTable[0] = this->Open("stdin", INPUT_TYPE);
     fileTable[1] = this->Open("stdout", OUTPUT_TYPE);
   }
