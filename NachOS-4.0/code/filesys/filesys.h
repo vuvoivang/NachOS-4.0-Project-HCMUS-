@@ -60,8 +60,8 @@ public:
     this->Create("stdin");
     this->Create("stdout");
 
-    fileTable[1] = this->Open("stdin", INPUT_TYPE);
-    fileTable[0] = this->Open("stdout", OUTPUT_TYPE);
+    fileTable[0] = this->Open("stdin", INPUT_TYPE);
+    fileTable[1] = this->Open("stdout", OUTPUT_TYPE);
   }
   // define destructor
   ~FileSystem() {
@@ -94,9 +94,9 @@ public:
   OpenFile *Open(char *name, int type) {
     int fileDescriptor;
 
-    if (type == INPUT_TYPE) // user ghi-write  kernel -> doc du lieu nay->read
+    if (type == OUTPUT_TYPE) // user ghi-write  kernel -> doc du lieu nay->read
       fileDescriptor = OpenForWrite(name);
-    else if (type == OUTPUT_TYPE || type == READONLY_TYPE)
+    else if (type ==  INPUT_TYPE|| type == READONLY_TYPE)
       fileDescriptor = OpenForRead(name, FALSE);
     else if (type == READWRITE_TYPE)
       fileDescriptor = OpenForReadWrite(name, FALSE);
