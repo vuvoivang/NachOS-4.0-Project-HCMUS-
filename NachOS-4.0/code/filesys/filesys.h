@@ -58,6 +58,7 @@ public:
     for (int i = 0; i < MAX_FILE_OPEN; i++) {
       fileTable[i] = NULL;
     }
+    // luon luon ton tai
     this->Create("stdin");
     this->Create("stdout");
 
@@ -95,9 +96,9 @@ public:
   OpenFile *Open(char *name, int type) {
     int fileDescriptor;
 
-    if (type == INPUT_TYPE) // user ghi-write  kernel -> doc du lieu nay->read
+    if (type == OUTPUT_TYPE) // user ghi-write  kernel -> doc du lieu nay->read
       fileDescriptor = OpenForWrite(name);
-    else if (type == OUTPUT_TYPE || type == READONLY_TYPE)
+    else if (type ==  INPUT_TYPE|| type == READONLY_TYPE)
       fileDescriptor = OpenForRead(name, FALSE);
     else if (type == READWRITE_TYPE)
       fileDescriptor = OpenForReadWrite(name, FALSE);
