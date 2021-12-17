@@ -16,6 +16,7 @@
 #include "callback.h"
 #include "console.h"
 #include "synch.h"
+#include "sysdep.h"
 
 // The following two classes define synchronized input and output to
 // a console device
@@ -26,11 +27,13 @@ class SynchConsoleInput : public CallBackObj {
     ~SynchConsoleInput();		// Deallocate console device
 
     char GetChar();		// Read a character, waiting if necessary
-    
+    int Read(char *into, int numBytes);	// Read synch line
   private:
     ConsoleInput *consoleInput;	// the hardware keyboard
     Lock *lock;			// only one reader at a time
     Semaphore *waitFor;		// wait for callBack
+    Semaphore *synchReadAvail;
+    Semaphore *RLineBlock;
 
     void CallBack();		// called when a keystroke is available
 };
@@ -41,11 +44,15 @@ class SynchConsoleOutput : public CallBackObj {
     ~SynchConsoleOutput();
 
     void PutChar(char ch);	// Write a character, waiting if necessary
-    
+    int Write(char *from, int numBytes);	// Write a synchronous line
+
   private:
     ConsoleOutput *consoleOutput;// the hardware display
     Lock *lock;			// only one writer at a time
     Semaphore *waitFor;		// wait for callBack
+    Semaphore *synchWriteAvail;
+    Semaphore *WLineBlock;
+
 
     void CallBack();		// called when more data can be written
 };

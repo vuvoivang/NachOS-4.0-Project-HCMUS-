@@ -38,12 +38,13 @@
 #include "sysdep.h"
 
 #define MAX_FILE_OPEN 10
-#define INPUT_TYPE 2 // nhap tu ban phim  2 
-#define OUTPUT_TYPE 3 // in ra console  3 -
-#define READONLY_TYPE 1  //0 
-#define READWRITE_TYPE 0 //1   
-
-#ifdef FILESYS_STUB
+#define INPUT_TYPE 5 // nhap tu ban phim  5
+#define OUTPUT_TYPE 4 // in ra console  4
+#define READONLY_TYPE 3
+#define READWRITE_TYPE 2 
+#define INDEX_STDIN 1  
+#define INDEX_STDOUT 0 
+#ifndef FILESYS_STUB
 // #ifdef FILESYS_STUB // Temporarily implement file system calls as
 // calls to UNIX, until the real file system
 // implementation is available
@@ -61,9 +62,8 @@ public:
     this->Create("stdin");
     this->Create("stdout");
 
-// luon luon mo file input output
-    fileTable[0] = this->Open("stdin", INPUT_TYPE);
-    fileTable[1] = this->Open("stdout", OUTPUT_TYPE);
+    fileTable[INDEX_STDIN] = this->Open("stdin", INPUT_TYPE);
+    fileTable[INDEX_STDOUT] = this->Open("stdout", OUTPUT_TYPE);
   }
   // define destructor
   ~FileSystem() {
@@ -105,7 +105,7 @@ public:
 
     if (fileDescriptor == -1)
       return NULL;
-    return new OpenFile(fileDescriptor);
+    return new OpenFile(fileDescriptor,type);
   }
 
   // tim slot trong

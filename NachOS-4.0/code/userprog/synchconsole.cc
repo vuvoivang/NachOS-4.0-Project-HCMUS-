@@ -22,6 +22,9 @@ SynchConsoleInput::SynchConsoleInput(char *inputFile)
     consoleInput = new ConsoleInput(inputFile, this);
     lock = new Lock("console in");
     waitFor = new Semaphore("console in", 0);
+    synchReadAvail = new Semaphore("Synch Read Avail",0);
+    RLineBlock = new Semaphore("Read Synch Line Block",1);
+	
 }
 
 //----------------------------------------------------------------------
@@ -34,6 +37,8 @@ SynchConsoleInput::~SynchConsoleInput()
     delete consoleInput; 
     delete lock; 
     delete waitFor;
+    delete synchReadAvail;
+    delete RLineBlock;
 }
 
 //----------------------------------------------------------------------
@@ -64,6 +69,48 @@ SynchConsoleInput::CallBack()
 {
     waitFor->V();
 }
+int
+SynchConsoleInput::Read(char *into, int numBytes)
+{
+	int loop;
+	int eolncond = FALSE;
+	char ch;
+
+	for (loop = 0; loop < numBytes; loop++)
+		into[loop] = 0;
+
+	loop = 0;
+
+	RLineBlock->P();				// Block for a read line
+
+//	printf("{%s}:\n",currentThread->getName());	// DEBUG print thread
+
+	while ( (loop < numBytes) && (eolncond == FALSE) )
+	{
+		do
+		{
+			synchReadAvail->P();		// Block for single char
+			ch = consoleInput->GetChar();		// Get a char (could)
+		} while ( ch == EOF);
+
+		if ( (ch == '\012') || (ch == '\001') )
+		{
+			eolncond = TRUE;
+		}
+		else
+		{
+			into[loop] = ch;		// Put the char in buf
+			loop++;				// Auto inc
+		}
+	}
+
+	RLineBlock->V();				// UnBLock
+
+	if (ch == '\001')				// CTRL-A Returns -1
+		return -1;				// For end of stream
+	else
+		return loop;				// How many did we rd
+}
 
 //----------------------------------------------------------------------
 // SynchConsoleOutput::SynchConsoleOutput
@@ -78,6 +125,9 @@ SynchConsoleOutput::SynchConsoleOutput(char *outputFile)
     consoleOutput = new ConsoleOutput(outputFile, this);
     lock = new Lock("console out");
     waitFor = new Semaphore("console out", 0);
+    synchWriteAvail = new Semaphore("Synch Write Avail",0);
+	WLineBlock = new Semaphore("Write Synch Line Block",1);
+    
 }
 
 //----------------------------------------------------------------------
@@ -90,6 +140,9 @@ SynchConsoleOutput::~SynchConsoleOutput()
     delete consoleOutput; 
     delete lock; 
     delete waitFor;
+  
+	delete synchWriteAvail;
+	delete WLineBlock;
 }
 
 //----------------------------------------------------------------------
@@ -116,4 +169,21 @@ void
 SynchConsoleOutput::CallBack()
 {
     waitFor->V();
+}
+int SynchConsoleOutput::Write(char *from, int numBytes)
+{
+	int loop;			// General purpose counter
+
+	WLineBlock->P();			// Block for the line
+
+//	printf("[%s]:\n",currentThread->getName());	//DEBUG: Print thread
+
+	for (loop = 0; loop < numBytes; loop++)
+	{
+		consoleOutput->PutChar(from[loop]);		// Write and wait
+		synchWriteAvail->P();			// Block for a character
+	}
+
+	WLineBlock->V();				// Free Up
+	return numBytes;				// Return the bytes out
 }

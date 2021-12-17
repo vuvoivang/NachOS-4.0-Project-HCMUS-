@@ -24,12 +24,15 @@
 #include "utility.h"
 #include "sysdep.h"
 
-#ifdef FILESYS_STUB			// Temporarily implement calls to 
+#ifndef FILESYS_STUB			// Temporarily implement calls to 
 					// Nachos file system as calls to UNIX!
 					// See definitions listed under #else
 class OpenFile {
   public:
     OpenFile(int f) { file = f; currentOffset = 0; }	// open the file
+	OpenFile(int f, int _type){file = f; currentOffset = 0; type = _type;}
+
+
     ~OpenFile() { Close(file); }			// close the file
 
     int ReadAt(char *into, int numBytes, int position) { 
@@ -53,10 +56,17 @@ class OpenFile {
 		}
 
     int Length() { Lseek(file, 0, 2); return Tell(file); }
-    
+	int getCurrentOffset(){
+		currentOffset = Tell(file);
+		return currentOffset;
+	}
+    int getType(){
+		return type;
+	}
   private:
     int file;
     int currentOffset;
+	int type;
 };
 
 #else // FILESYS
@@ -66,6 +76,7 @@ class OpenFile {
   public:
     OpenFile(int sector);		// Open a file whose header is located
 					// at "sector" on the disk
+	OpenFile(int sector, int type);
     ~OpenFile();			// Close the file
 
     void Seek(int position); 		// Set the position from which to 
@@ -86,10 +97,16 @@ class OpenFile {
 					// file (this interface is simpler 
 					// than the UNIX idiom -- lseek to 
 					// end of file, tell, lseek back 
-    
+    int getSeekPosition(){
+		return seekPosition;
+	}
+	int getType(){
+		return type;
+	}
   private:
     FileHeader *hdr;			// Header for this file 
-    int seekPosition;			// Current position within the file
+    int seekPosition; // Current position within the file
+	int type;			// 0: only read
 };
 
 #endif // FILESYS
