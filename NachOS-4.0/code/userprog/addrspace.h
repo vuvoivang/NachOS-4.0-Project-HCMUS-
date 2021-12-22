@@ -15,12 +15,13 @@
 
 #include "copyright.h"
 #include "filesys.h"
+#include "machine.h"
 
 #define UserStackSize		1024 	// increase this as necessary!
 
 class AddrSpace {
   public:
-    AddrSpace();			// Create an address space.
+    AddrSpace(char * filename);			// Create an address space.
     ~AddrSpace();			// De-allocate an address space
 
     bool Load(char *fileName);		// Load a program into addr space from

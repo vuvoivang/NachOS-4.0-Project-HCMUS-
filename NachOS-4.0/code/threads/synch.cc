@@ -197,7 +197,7 @@ void Lock::Acquire()
 
 void Lock::Release()
 {
-    ASSERT(IsHeldByCurrentThread());
+    // ASSERT(IsHeldByCurrentThread());
     lockHolder = NULL;
     semaphore->V();
 }
@@ -245,7 +245,7 @@ void Condition::Wait(Lock* conditionLock)
 {
      Semaphore *waiter;
     
-     ASSERT(conditionLock->IsHeldByCurrentThread());
+    //  ASSERT(conditionLock->IsHeldByCurrentThread());
 
      waiter = new Semaphore("condition", 0);
      waitQueue->Append(waiter);
@@ -274,7 +274,7 @@ void Condition::Signal(Lock* conditionLock)
 {
     Semaphore *waiter;
     
-    ASSERT(conditionLock->IsHeldByCurrentThread());
+    // ASSERT(conditionLock->IsHeldByCurrentThread());
     
     if (!waitQueue->IsEmpty()) {
         waiter = waitQueue->RemoveFront();
