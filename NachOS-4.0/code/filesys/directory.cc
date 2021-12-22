@@ -23,7 +23,7 @@
 #include "utility.h"
 #include "filehdr.h"
 #include "directory.h"
-
+#include "openfile.h"
 //----------------------------------------------------------------------
 // Directory::Directory
 // 	Initialize a directory; initially, the directory is completely

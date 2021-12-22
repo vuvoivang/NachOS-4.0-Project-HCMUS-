@@ -12,9 +12,15 @@
 #include "debug.h"
 #include "kernel.h"
 
+#include "synch.h"
+#include "bitmap.h"
+#include "filesys.h"
+#include "sysdep.h"
+
 extern Kernel *kernel;
 extern Debug *debug;
 extern FileSystem *fileSystem;
-
+extern Semaphore *addrLock;
+extern Bitmap *gPhysPageBitmap;
 #endif // MAIN_H
 

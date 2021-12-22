@@ -8,6 +8,7 @@
 
 #include "copyright.h"
 #include "pbitmap.h"
+#include "openfile.h"
 
 //----------------------------------------------------------------------
 // PersistentBitmap::PersistentBitmap(int)

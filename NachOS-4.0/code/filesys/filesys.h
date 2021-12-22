@@ -44,7 +44,7 @@
 #define READWRITE_TYPE 2 
 #define INDEX_STDIN 1  
 #define INDEX_STDOUT 0 
-#ifndef FILESYS_STUB
+#ifdef FILESYS_STUB
 // #ifdef FILESYS_STUB // Temporarily implement file system calls as
 // calls to UNIX, until the real file system
 // implementation is available
