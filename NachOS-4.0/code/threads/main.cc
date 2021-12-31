@@ -49,13 +49,19 @@
 #include "synch.h"
 #include "bitmap.h"
 #include "filesys.h"
+#include "stable.h"
+#include "ptable.h"
 
 // global variables
 Kernel *kernel;
 Debug *debug;
 FileSystem *fileSystem;
 Semaphore *addrLock;
-Bitmap *gPhysPageBitmap;
+BitMap *gPhysPageBitmap;
+PTable*pTab;
+STable*sTab;
+
+
 
 //----------------------------------------------------------------------
 // Cleanup

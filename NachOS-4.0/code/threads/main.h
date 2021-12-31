@@ -22,5 +22,6 @@ extern Debug *debug;
 extern FileSystem *fileSystem;
 extern Semaphore *addrLock;
 extern Bitmap *gPhysPageBitmap;
+//khai bao toan cuc PTable,STable
 #endif // MAIN_H
 
