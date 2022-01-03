@@ -152,11 +152,11 @@ AddrSpace::AddrSpace(char *filename) {
   for (j = 0; j < numDataPage; j++) {
     //
     if (noffH.initData.size > 0)
-      executable->ReadAt(&(kernel->machine-> mainMemory[noffH.code.virtualAddr]) +
-                             pageTable[i].physicalPage * PageSize,
-                         j < (numDataPage - 1) ? PageSize : lastDataPageSize,
-                         noffH.initData.inFileAddr + j * PageSize +
-                             firstDataPageSize);
+      executable->ReadAt(
+          &(kernel->machine->mainMemory[noffH.code.virtualAddr]) +
+              pageTable[i].physicalPage * PageSize,
+          j < (numDataPage - 1) ? PageSize : lastDataPageSize,
+          noffH.initData.inFileAddr + j * PageSize + firstDataPageSize);
     i++;
   }
   delete executable;
