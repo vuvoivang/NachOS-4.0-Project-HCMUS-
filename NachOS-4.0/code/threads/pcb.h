@@ -23,10 +23,10 @@ public:
     
     char boolBG;                // Kiem tra neu la tien trinh nen
     
-    PCB(int = 0);               // Contructor
+    PCB(int id = 0);               // Contructor
     ~PCB();                     // Destructor
 
-    int Exec(char*,int);        // Tao mot thread moi
+    int Exec(char* filename,int pid);        // Tao mot thread moi
     int GetID();                // Trả về ProcessID của tiến trình gọi thực hiện
     int GetNumWait();           // Trả về số lượng tiến trình chờ
 
@@ -41,10 +41,10 @@ public:
     void IncNumWait();          // Tăng số tiến trình chờ
     void DecNumWait();          // Giảm số tiến trình chờ
 
-    void SetExitCode(int);      // Đặt exitcode của tiến trình
+    void SetExitCode(int ec);      // Đặt exitcode của tiến trình
     int GetExitCode();          // Trả về exitcode
 
-    void SetFileName(char*);    // Set ten tien trinh
+    void SetFileName(char* filename);    // Set ten tien trinh
     char* GetFileName();        // Tra ve ten tien trinh
 
 };
