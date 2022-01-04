@@ -90,7 +90,7 @@ Thread::~Thread()
 //----------------------------------------------------------------------
 
 void 
-Thread::Fork(VoidFunctionPtr func, void *arg)
+Thread::Fork(VoidFunctionPtr func, void *arg)  // VoidFuncPtr int pId
 {
     Interrupt *interrupt = kernel->interrupt; // ngat ket noi
     Scheduler *scheduler = kernel->scheduler; // ready list

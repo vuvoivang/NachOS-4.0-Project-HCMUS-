@@ -1,5 +1,5 @@
 #include "ptable.h"
-#include "system.h"
+
 
 
 PTable::PTable(int size)
@@ -12,7 +12,7 @@ PTable::PTable(int size)
 	for(i = 0 ; i < MAXPROCESS ; i++)
 		pcb[i] = NULL;
 
-	bm->Mark(0);
+	bm->Mark(0);// chua duoc su dung
 }
 
 PTable::~PTable()
@@ -37,6 +37,7 @@ int PTable::ExecUpdate(char* filename)
     // khong cho phep nap 2 tien trinh 1 luc
 	bmsem->P();		
 
+	// filename khong ton tai
     if(filename==NULL) {
         bmsem->V();
         return -1;
@@ -53,7 +54,7 @@ int PTable::ExecUpdate(char* filename)
     
 
     // Kiem tra chuong trinh duoc goi co la chinh no hay khong
-	if(strcmp(filename,currentThread->getName()) != 0)
+	if(strcmp(filename,kernel->currentThread->getName()) == 0)
 	{
 		printf("\nKhong duoc phep goi chinh no !!!\n");
 		bmsem->V();
@@ -63,6 +64,7 @@ int PTable::ExecUpdate(char* filename)
 
     //Kiem tra con slot trong khong de luu tien trinh hay khong
 	int idSlot = GetFreeSlot();
+	//idSlot trong bitmap
 	if(idSlot == -1)
 	{
 		printf("\nKhong con slot trong !!!\n");
@@ -75,11 +77,11 @@ int PTable::ExecUpdate(char* filename)
 	pcb[idSlot]->SetFileName(filename);
 
     // Gan parent ID tuong ung
-    pcb[idSlot]->parentID = currentThread->processID;
+    pcb[idSlot]->parentID = kernel->currentThread->processID;
 
 	bm->Mark(idSlot);
 
-	int processID = pcb[idSlot]->Exec(filename,idSlot);
+	int processID = pcb[idSlot]->Exec(filename,idSlot);// tra ve idSlot
 
     delete fileOpen;
 	bmsem->V();

@@ -852,6 +852,43 @@ void ExceptionHandler(ExceptionType which)
 		// 	}
 			
 		// }
+    case SC_Exec:
+    {
+      int virtAddr;
+      char* name;
+      OpenFile *oFile;
+			virtAddr = machine->ReadRegister(4);	// doc dia chi ten chuong trinh tu thanh ghi r4
+			
+			name = User2System(virtAddr, MaxFileLength + 1); // Lay ten chuong trinh, nap vao kernel
+	
+			if(name == NULL)
+			{
+				DEBUG('a', "\n Not enough memory in System");
+				printf("\n Not enough memory in System");
+				kernel->machine->WriteRegister(2, -1);
+				IncreasePC();
+				return;
+			}
+			oFile = fileSystem->Open(name);
+			if (oFile == NULL)
+			{
+				printf("\nExec:: Can't open this file.");
+				kernel->machine->WriteRegister(2,-1);
+				IncreasePC();
+				return;
+			}
+
+			delete oFile;
+
+			// Return child process id
+			int id = pTab->ExecUpdate(name); 
+			machine->WriteRegister(2,id);
+
+			delete[] name;	
+			IncreasePC();
+			return;
+
+    }
     default:
       cerr << "Unexpected system call " << type << "\n";
       break;

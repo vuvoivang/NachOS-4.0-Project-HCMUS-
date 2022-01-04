@@ -10,7 +10,7 @@
 
 #include "copyright.h"
 // #include "system.h"
-// include "main.h"
+include "main.h"
 #include "console.h"
 #include "addrspace.h"
 #include "synch.h"
@@ -29,7 +29,7 @@ void StartProcess_2(int id) // fork con tro ham den bo nho cua tien trinh con
 		return;
 	}
 
-    currentThread->space = space;
+    kernel->currentThread->space = space;
 
     space->InitRegisters();		
     space->RestoreState();		
@@ -59,7 +59,7 @@ StartProcess(char *filename)
     } */
     // 
     space = new AddrSpace(filename);    
-    currentThread->space = space;
+    kernel->currentThread->space = space;
 
 //    delete executable;			// close file
 

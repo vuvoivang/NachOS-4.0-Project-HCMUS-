@@ -5,15 +5,16 @@
 #include "pcb.h"
 #include "synch.h"
 #include "filesys.h"
+#include "kernel.h"
 
 #define MAXPROCESS 10
 
 class PTable
 {
 private:
-	Bitmap		*bm;
+	Bitmap		*bm;  // class truy vet mang pcb
 	PCB		*pcb[MAXPROCESS];
-	int		psize;
+	int		psize;  // process size cua 1 process hien hanh
 	Semaphore	*bmsem;		//Dung de ngan chan truong hop nap 2 tien trinh cung luc
 
 public:
