@@ -435,3 +435,7 @@ Thread::SelfTest()
     SimpleThread(0);
 }
 
+void Thread::FreeSpace(){ // Giai phong vung nho cho tien trinh
+	if (space != 0)
+		delete space;
+}

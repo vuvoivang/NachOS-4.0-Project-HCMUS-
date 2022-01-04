@@ -11,7 +11,7 @@
 class PTable
 {
 private:
-	BitMap		*bm;
+	Bitmap *bm;
 	PCB		*pcb[MAXPROCESS];
 	int		psize;
 	Semaphore	*bmsem;		//Dung de ngan chan truong hop nap 2 tien trinh cung luc
@@ -25,6 +25,6 @@ public:
 	int GetFreeSlot();		//Tim slot trong de luu thong tin cho tien trinh moi
 	bool IsExist(int pID); 	//Kiem tra co ton tai process ID nay khong
 	void Remove(int pID); 	//Xoa mot processID ra khoi mang quan ly no, khi ma tien trinh nay da ket thuc
-	char* GetName(int pID);	//Lay ten cua tien trinh co processID la pID
+	
 };
 #endif

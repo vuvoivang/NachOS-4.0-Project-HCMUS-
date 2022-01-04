@@ -1957,7 +1957,8 @@ main.o: ../threads/main.cc /usr/include/stdc-predef.h ../lib/copyright.h \
  ../filesys/filesys.h ../filesys/openfile.h ../threads/scheduler.h \
  ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
  ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
- ../machine/timer.h ../threads/synch.h ../lib/bitmap.h
+ ../machine/timer.h ../threads/synch.h ../lib/bitmap.h \
+ ../threads/ptable.h ../threads/pcb.h
 scheduler.o: ../threads/scheduler.cc /usr/include/stdc-predef.h \
  ../lib/copyright.h ../lib/debug.h ../lib/utility.h ../lib/sysdep.h \
  /usr/include/c++/4.8/iostream \

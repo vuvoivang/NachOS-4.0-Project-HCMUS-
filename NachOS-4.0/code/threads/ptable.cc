@@ -6,8 +6,9 @@ PTable::PTable(int size)
 {
 	int i = 0;
 	psize = size;
-	bm = new BitMap(size);
-	bmsem = new Semaphore("Bitmap sem",1);
+	// khoi tao bm va bmsem de su dung
+	bm = new Bitmap(size);
+	bmsem = new Semaphore("Bitmapsem",1);
 		
 	for(i = 0 ; i < MAXPROCESS ; i++)
 		pcb[i] = NULL;
@@ -44,6 +45,7 @@ int PTable::ExecUpdate(char* filename)
 
     //Kiem tra mo file
 	OpenFile *fileOpen = fileSystem->Open(filename);
+	// Khong mo duoc
 	if (fileOpen == NULL) 
 	{
 		printf("\nCan't open file %s\n", filename);
@@ -53,7 +55,7 @@ int PTable::ExecUpdate(char* filename)
     
 
     // Kiem tra chuong trinh duoc goi co la chinh no hay khong
-	if(strcmp(filename,currentThread->getName()) != 0)
+	if(strcmp(filename,kernel->currentThread->getName()) != 0)
 	{
 		printf("\nKhong duoc phep goi chinh no !!!\n");
 		bmsem->V();
@@ -75,7 +77,7 @@ int PTable::ExecUpdate(char* filename)
 	pcb[idSlot]->SetFileName(filename);
 
     // Gan parent ID tuong ung
-    pcb[idSlot]->parentID = currentThread->processID;
+    pcb[idSlot]->parentID = kernel->currentThread->processID;
 
 	bm->Mark(idSlot);
 
@@ -86,22 +88,22 @@ int PTable::ExecUpdate(char* filename)
 	return processID;
 }
 
-int PTable::ExitUpdate(int ec)
+int PTable::ExitUpdate(int exitCode)
 {
     //Kiem tra pID co ton tai khong
 
-	int processID = currentThread->processID;
+	int processID = kernel->currentThread->processID;
 
     // Doi 1 chut so voi code, theo pdf
 
     // Main process: goi Halt
-    currentThread->FreeSpace();
+    kernel->currentThread->FreeSpace();
     if(processID == 0)
 	{
 		interrupt->Halt();
 		return 0;
 	}
-    currentThread->Finish();
+    kernel->currentThread->Finish();
 
 	if(!IsExist(processID))
 	{
@@ -109,35 +111,25 @@ int PTable::ExitUpdate(int ec)
 		return -1;
 	}
 
-    
-	pcb[processID]->SetExitCode(ec);
+    pcb[pcb[id]->parentID]->DecNumWait();
+	pcb[processID]->SetExitCode(exitCode);
 	
     // JoinRelease va ExitWait de giai phong su cho doi cho tien trinh cha va xin phep ket thuc
 	if(pcb[processID]->JoinStatus != -1)
-	{
+	{	
+		// giai phong su cho doi cua tien trinh cha
 		pcb[processID]->JoinRelease();
+		// Xin phep tien trinh cha ket thuc
 		pcb[processID]->ExitWait();
-		Remove(processID);	
+			
 	}
-	else
-		Remove(processID);
-
-	return ec;
+	Remove(processID);
+	return exitCode;
 }
 
 int PTable::JoinUpdate(int pID)
 {
-	// if(pID <= 0 || pID > MAXPROCESS)
-	// {
-	// 	printf("\nKhong ton tai process: id = %d\n",pID);
-	// 	return -1;
-	// }
-
-	// if (pcb[pID] == NULL)
-	// {
-	// 	printf("Khong ton tai process id nay!");
-	// 	return -1;
-	// }
+	
 
     if (!IsExist(pID))
 	{
@@ -147,7 +139,7 @@ int PTable::JoinUpdate(int pID)
 
 
     // Kiem tra tien trinh join vao chinh no
-    if(currentThread->processID == pID)
+    if(kernel->currentThread->processID == pID)
 	{
 		printf("\nTien trinh khong duoc join vao chinh no !!!\n");
 		return -1;
@@ -155,19 +147,21 @@ int PTable::JoinUpdate(int pID)
 
     // Khi tien trinh join hop le
     // Tien trinh hien tai co la cha cua tien trinh join 
-	if(currentThread->processID != pcb[pID]->parentID)
+	if(kernel->currentThread->processID != pcb[pID]->parentID)
 	{
 		printf("\nLoi: Ko duoc phep join vao tien trinh khong phai cha cua no !!!\n");
 		return -1;
 	}
+	// Tang numwait
+	pcb[pcb[id]->parentID]->IncNumWait();
 
 	pcb[pID]->JoinWait(); 	//Tien trinh cha cho doi cho den khi tien trinh con ket thuc
 
-	int ec = pcb[pID]->GetExitCode(); 
+	int exitCode = pcb[pID]->GetExitCode(); 
 
 	pcb[pID]->ExitRelease();	//cho phep tien trinh con ket thuc
-	
-	return 0;
+	// tra ve exit code
+	return exitCode;
 }
 
 int PTable::GetFreeSlot()
@@ -178,7 +172,7 @@ int PTable::GetFreeSlot()
 
 bool PTable::IsExist(int pID)
 {
-	if(pID<0 || pID>9)
+	if(pID<0 || pID> MAXPROCESS)
 		return 0;
 	return bm->Test(pID);
 }
@@ -186,7 +180,7 @@ bool PTable::IsExist(int pID)
 void PTable::Remove(int pID)
 {
     // Xoa process co id la pID ra khoi PTable
-	if(pID<0 || pID>9)
+	if(pID<0 || pID> MAXPROCESS)
 		return;
 	if(bm->Test(pID))
 	{
@@ -195,8 +189,5 @@ void PTable::Remove(int pID)
 	}
 }
 
-char* PTable::GetName(int pID)
-{
-	if(pID>=0 && pID<10 && bm->Test(pID))
-		return pcb[pID]->GetFileName();
-}
+
+
