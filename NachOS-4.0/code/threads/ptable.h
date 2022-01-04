@@ -4,33 +4,27 @@
 #include "bitmap.h"
 #include "pcb.h"
 #include "synch.h"
+#include "filesys.h"
 
-#define MAX_PROCESS 10
+#define MAXPROCESS 10
 
 class PTable
 {
 private:
-	int psize;
-	Bitmap *bm;                 // đánh dấu các vị trí đã được sử dụng trong pcb
-	PCB* pcb[MAX_PROCESS];
-
-	Semaphore* bmsem;           // dùng để ngăn chặn trường hợp nạp 2 tiến trình cùng
+	BitMap		*bm;
+	PCB		*pcb[MAXPROCESS];
+	int		psize;
+	Semaphore	*bmsem;		//Dung de ngan chan truong hop nap 2 tien trinh cung luc
 
 public:
-     PTable(int = 10);           // Khoi tao size doi tuong pcb
-                                // de luu size process.
-                                // Gan gia tri ban dau la null.
-    ~PTable();                  // Huy cac doi tuong da tao
-		
-    int ExecUpdate(char*);      // Xử lý cho system call SC_Exit
-    int ExitUpdate(int);        // Xử lý cho system call SC_Exit
-    int JoinUpdate(int);        // Xử lý cho system call SC_Join
-
-    int GetFreeSlot();          // tìm free slot để lưu thông tin cho tiến trình mới
-    bool IsExist(int pid);      // kiểm tra tồn tại processID này không?
-    
-    void Remove(int pid);       // khi tiến trình kết thúc, delete processID ra khỏi mảng quản lý nó
-
-    char* GetFileName(int id);  // Trả về tên của tiến trình
+	PTable(int size);		//Khoi tao size doi tuong pcb de luu size process. Gan gia tri ban dau la null. Nho khoi tao *bm va *bmsem de su dung
+	~PTable();			//Huy doi tuong da tao
+	int ExecUpdate(char* filename);		//return PID
+	int ExitUpdate(int ec);
+	int JoinUpdate(int pID);
+	int GetFreeSlot();		//Tim slot trong de luu thong tin cho tien trinh moi
+	bool IsExist(int pID); 	//Kiem tra co ton tai process ID nay khong
+	void Remove(int pID); 	//Xoa mot processID ra khoi mang quan ly no, khi ma tien trinh nay da ket thuc
+	char* GetName(int pID);	//Lay ten cua tien trinh co processID la pID
 };
-#endif // PTABLE_H
+#endif
