@@ -6,11 +6,12 @@
 #include"machine.h"
 #include"main.h"
 
-
+//Fork con tro ham den vung nho cua tine trinh con
 extern void StartProcess_2(int id);
 
 PCB::PCB(int id)
 {
+	// Main thread
     if (id == 0)
         this->parentID = -1;
     else
@@ -112,7 +113,7 @@ int PCB::Exec(char* filename, int id)
 	// Đặt parrentID của thread này là processID của thread gọi thực thi Exec
 	this->parentID = currentThread->processID;
 	// Gọi thực thi Fork(StartProcess_2,id) => Ta cast thread thành kiểu int, sau đó khi xử ký hàm StartProcess ta cast Thread về đúng kiểu của nó.
- 	this->thread->Fork(StartProcess_2,id);
+ 	this->thread->Fork(StartProcess_2,(void*)id);
 
     	multex->V();
 	// Trả về id.

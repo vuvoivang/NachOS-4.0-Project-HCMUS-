@@ -6,7 +6,7 @@ PTable::PTable(int size)
 {
 	int i = 0;
 	psize = size;
-	bm = new BitMap(size);
+	bm = new Bitmap(size);
 	bmsem = new Semaphore("Bitmap sem",1);
 		
 	for(i = 0 ; i < MAXPROCESS ; i++)

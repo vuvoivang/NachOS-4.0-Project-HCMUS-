@@ -16,7 +16,7 @@
 #include "synch.h"
 
 
-void StartProcess_2(int id)
+void StartProcess_2(int id) // fork con tro ham den bo nho cua tien trinh con
 {
     char* fileName = pTab->GetFileName(id);
 
