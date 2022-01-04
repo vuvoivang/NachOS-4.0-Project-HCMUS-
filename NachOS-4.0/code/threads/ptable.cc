@@ -18,7 +18,7 @@ PTable::PTable(int size)
         return;
 
     psize = size;
-    bm = new BitMap(size);
+    bm = new Bitmap(size);
     bmsem = new Semaphore("bmsem",1);
 
     For(i,0,MAX_PROCESS){

@@ -57,7 +57,7 @@ Kernel *kernel;
 Debug *debug;
 FileSystem *fileSystem;
 Semaphore *addrLock;
-BitMap *gPhysPageBitmap;
+Bitmap *gPhysPageBitmap;
 PTable*pTab;
 STable*sTab;
 
