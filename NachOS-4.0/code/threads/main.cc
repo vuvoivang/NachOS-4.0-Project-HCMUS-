@@ -49,6 +49,7 @@
 #include "synch.h"
 #include "bitmap.h"
 #include "filesys.h"
+#include "ptable.h"
 #include "stable.h"
 
 // global variables
@@ -57,6 +58,7 @@ Debug *debug;
 FileSystem *fileSystem;
 Semaphore *addrLock;
 Bitmap *gPhysPageBitmap;
+PTable * pTab;
 STable *sTab;
 
 //----------------------------------------------------------------------
@@ -241,6 +243,8 @@ int main(int argc, char **argv) {
   kernel = new Kernel(argc, argv);
 
   kernel->Initialize();
+
+  pTab = new PTable(MAXPROCESS);
 
   // new fileSystem
   fileSystem = new FileSystem();

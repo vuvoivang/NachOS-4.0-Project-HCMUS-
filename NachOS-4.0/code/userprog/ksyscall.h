@@ -12,7 +12,7 @@
 #define __USERPROG_KSYSCALL_H__ 
 
 #include "kernel.h"
-
+#include "main.h"
 
 
 

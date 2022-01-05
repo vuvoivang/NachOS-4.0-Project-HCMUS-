@@ -1,2 +1,5 @@
 usr/local/nachos/
 *.o
+*.dep
+NachOS-4.0/code/test/*
+!NachOS-4.0/code/test/*.c
