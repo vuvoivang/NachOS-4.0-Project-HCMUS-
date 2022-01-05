@@ -13,7 +13,6 @@
 #define MAX_SEMAPHORE 10
 
 
-#endif // STABLE_H
 
 // Lop Sem dung de quan ly semaphore.
 class Sem
@@ -77,3 +76,5 @@ public:
 
 	
 };
+
+#endif // STABLE_H
