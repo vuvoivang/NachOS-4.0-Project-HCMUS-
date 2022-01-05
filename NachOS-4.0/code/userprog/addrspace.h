@@ -21,6 +21,7 @@
 
 class AddrSpace {
   public:
+    AddrSpace();
     AddrSpace(char * filename);			// Create an address space.
     ~AddrSpace();			// De-allocate an address space
 
