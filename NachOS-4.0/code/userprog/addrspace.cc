@@ -53,6 +53,21 @@ static void SwapHeader(NoffHeader *noffH) {
 #endif
 }
 
+AddrSpace::AddrSpace()
+{
+    pageTable = new TranslationEntry[NumPhysPages];
+    for (int i = 0; i < NumPhysPages; i++) {
+	pageTable[i].virtualPage = i;	// for now, virt page # = phys page #
+	pageTable[i].physicalPage = i;
+	pageTable[i].valid = TRUE;
+	pageTable[i].use = FALSE;
+	pageTable[i].dirty = FALSE;
+	pageTable[i].readOnly = FALSE;  
+    }
+    
+    // zero out the entire address space
+    bzero(kernel->machine->mainMemory, MemorySize);
+}
 //----------------------------------------------------------------------
 // AddrSpace::AddrSpace
 // 	Create an address space to run a user program.
