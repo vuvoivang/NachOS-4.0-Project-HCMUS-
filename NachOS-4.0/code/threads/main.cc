@@ -51,6 +51,7 @@
 #include "filesys.h"
 #include "ptable.h"
 #include "stable.h"
+#include "machine.h"
 
 // global variables
 Kernel *kernel;
@@ -71,6 +72,7 @@ static void Cleanup(int x) {
   delete kernel;
   delete fileSystem; // giai phong fileSystem
   delete addrLock;
+  delete gPhysPageBitmap;
 }
 
 //-------------------------------------------------------------------
@@ -248,6 +250,7 @@ int main(int argc, char **argv) {
 
   // new fileSystem
   fileSystem = new FileSystem();
+  gPhysPageBitmap = new Bitmap(NumPhysPages);
   addrLock = new Semaphore("addrLock", 1);
 
   CallOnUserAbort(Cleanup); // if user hits ctl-C
@@ -286,7 +289,11 @@ int main(int argc, char **argv) {
 
 
   if (userProgName != NULL) {
+<<<<<<< HEAD
     AddrSpace *space = new AddrSpace;
+=======
+    AddrSpace *space = new AddrSpace(userProgName);
+>>>>>>> 175176d1bcb4b9031fd67be581ff372c3ace434a
     ASSERT(space != (AddrSpace *)NULL);
     if (space->Load(userProgName)) { // load the program into the space
       space->Execute();              // run the program

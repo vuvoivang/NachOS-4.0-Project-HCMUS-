@@ -27,7 +27,7 @@
 
 // Definitions related to the size, and format of user memory
 
-const int PageSize = 128; 		// set the page size equal to
+const int PageSize = 512; 		// set the page size equal to
 					// the disk sector size, for simplicity
 
 //
