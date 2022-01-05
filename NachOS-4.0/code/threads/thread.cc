@@ -45,6 +45,8 @@ Thread::Thread(char* threadName)
 					// new thread ignores contents 
 					// of machine registers
     }
+    processID = 0;
+    exitStatus = 0;
     space = NULL;
 }
 

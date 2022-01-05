@@ -678,7 +678,7 @@ void ExceptionHandler(ExceptionType which) {
         // Su dung ham Read cua lop SynchConsole de doc max charcount byte ->
         // bufffer
         // tra ve so byte thuc su doc duoc
-        int size = kernel->synchConsoleIn > Read(buffer, charcount);
+        int size = kernel->synchConsoleIn->Read(buffer, charcount);
 
         System2User(virAddr, size,
                     buffer); // Copy chuoi tu vung nho System Space (buffer)
@@ -775,7 +775,7 @@ void ExceptionHandler(ExceptionType which) {
           // write moi byte trong file ra sdt out
           // gSynchConsole->Write(buffer + pos, 1); // Su dung ham Write cua lop
           // SynchConsole
-          kernel->synchConsoleOut->PutChar(char(buffer + pos));
+          kernel->synchConsoleOut->PutChar((buffer + pos)[0]);
           // den byte tiep theo
           pos++;
         }
@@ -809,9 +809,9 @@ void ExceptionHandler(ExceptionType which) {
       int pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
       int result = pTab->JoinUpdate(pID); // join vao tien trinh cha
       // tra ve ket qua thuc hien
-      machine->WriteRegister(2, result);
+      kernel->machine->WriteRegister(2, result);
 
-      IncreasePC();
+      increasePC();
       return;
     }
 
@@ -821,9 +821,9 @@ void ExceptionHandler(ExceptionType which) {
 
       int exitStatus = kernel->machine->ReadRegister(4);
       int result = pTab->ExitUpdate(exitStatus);
-      machine->WriteRegister(2, result);
+      kernel->machine->WriteRegister(2, result);
 
-      IncreasePC();
+      increasePC();
       return;
     }
     default:

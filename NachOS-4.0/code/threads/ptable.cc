@@ -1,5 +1,5 @@
 #include "ptable.h"
-#include "system.h"
+#include "main.h"
 
 
 PTable::PTable(int size)
@@ -55,7 +55,7 @@ int PTable::ExecUpdate(char* filename)
     
 
     // Kiem tra chuong trinh duoc goi co la chinh no hay khong
-	if(strcmp(filename,kernel->currentThread->getName()) != 0)
+	if(strcmp(filename,kernel->currentThread->getName()) == 0)
 	{
 		printf("\nKhong duoc phep goi chinh no !!!\n");
 		bmsem->V();
@@ -100,7 +100,7 @@ int PTable::ExitUpdate(int exitCode)
     kernel->currentThread->FreeSpace();
     if(processID == 0)
 	{
-		interrupt->Halt();
+		kernel->interrupt->Halt();
 		return 0;
 	}
     kernel->currentThread->Finish();
@@ -111,18 +111,14 @@ int PTable::ExitUpdate(int exitCode)
 		return -1;
 	}
 
-    pcb[pcb[id]->parentID]->DecNumWait();
+    pcb[pcb[processID]->parentID]->DecNumWait();
 	pcb[processID]->SetExitCode(exitCode);
 	
     // JoinRelease va ExitWait de giai phong su cho doi cho tien trinh cha va xin phep ket thuc
-	if(pcb[processID]->JoinStatus != -1)
-	{	
-		// giai phong su cho doi cua tien trinh cha
-		pcb[processID]->JoinRelease();
-		// Xin phep tien trinh cha ket thuc
-		pcb[processID]->ExitWait();
-			
-	}
+	// giai phong su cho doi cua tien trinh cha
+	pcb[processID]->JoinRelease();
+	// Xin phep tien trinh cha ket thuc
+	pcb[processID]->ExitWait();
 	Remove(processID);
 	return exitCode;
 }
@@ -153,7 +149,7 @@ int PTable::JoinUpdate(int pID)
 		return -1;
 	}
 	// Tang numwait
-	pcb[pcb[id]->parentID]->IncNumWait();
+	pcb[pcb[pID]->parentID]->IncNumWait();
 
 	pcb[pID]->JoinWait(); 	//Tien trinh cha cho doi cho den khi tien trinh con ket thuc
 
@@ -167,12 +163,12 @@ int PTable::JoinUpdate(int pID)
 int PTable::GetFreeSlot()
 {
     // Tim slot de luu thong tin cho tien trinh moi
-	return bm->Find();
+	return bm->FindAndSet();
 }
 
 bool PTable::IsExist(int pID)
 {
-	if(pID<0 || pID> MAXPROCESS)
+	if(pID<0 || pID > MAXPROCESS)
 		return 0;
 	return bm->Test(pID);
 }
@@ -180,7 +176,7 @@ bool PTable::IsExist(int pID)
 void PTable::Remove(int pID)
 {
     // Xoa process co id la pID ra khoi PTable
-	if(pID<0 || pID> MAXPROCESS)
+	if(pID<0 || pID > MAXPROCESS)
 		return;
 	if(bm->Test(pID))
 	{
@@ -188,6 +184,9 @@ void PTable::Remove(int pID)
 		delete pcb[pID];
 	}
 }
-
+char* PTable::GetFileName(int id)
+{
+	return (pcb[id]->GetFileName());
+}
 
 

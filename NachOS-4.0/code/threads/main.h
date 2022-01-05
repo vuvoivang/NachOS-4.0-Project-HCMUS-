@@ -16,11 +16,13 @@
 #include "bitmap.h"
 #include "filesys.h"
 #include "sysdep.h"
+#include "ptable.h"
 
 extern Kernel *kernel;
 extern Debug *debug;
 extern FileSystem *fileSystem;
 extern Semaphore *addrLock;
 extern Bitmap *gPhysPageBitmap;
+extern PTable *pTab;
 #endif // MAIN_H
 

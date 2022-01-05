@@ -1,6 +1,6 @@
 #include "pcb.h"
 #include "utility.h"
-#include "system.h"
+#include "main.h"
 #include "thread.h"
 #include "addrspace.h"
 
