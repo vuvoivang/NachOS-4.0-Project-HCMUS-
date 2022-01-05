@@ -86,7 +86,6 @@ public:
 
   OpenFile *Open(char *name) {
     int fileDescriptor = OpenForReadWrite(name, FALSE);
-
     if (fileDescriptor == -1)
       return NULL;
     return new OpenFile(fileDescriptor);

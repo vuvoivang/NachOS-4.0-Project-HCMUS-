@@ -8,45 +8,36 @@
 class PCB
 {
 private:
-    Semaphore* joinsem;         // semaphore cho quá trình join
-    Semaphore* exitsem;         // semaphore cho quá trình exit
-    Semaphore* multex;          // semaphore cho quá trình truy xuất đọc quyền  
-
-    int exitcode;		
-    int numwait;                // số tiến trình đã join
-
-    char FileName[32];          // Ten cua tien trinh
-
-    Thread* thread;             // Tien trinh cua chuong trinh
+	Semaphore	*joinsem;	//semaphore cho qua trinh join
+	Semaphore	*exitsem;	//semaphore cho qua trinh exit
+	Semaphore	*mutex;
+	int		exitcode;
+	Thread		*thread;
+	int		pid; //id cua tien trinh
+	int		numwait;	//so tien trinh da join
+	// bo sung them ten tien trinh 
+	char     	FileName[32];
 public:
-    int parentID;               // ID cua tien trinh cha
-    
-    char boolBG;                // Kiem tra neu la tien trinh nen
-    
-    PCB(int id = 0);               // Contructor
-    ~PCB();                     // Destructor
+	int 		parentID;	//ID cua tien trinh cha
+	int		JoinStatus;	//Trang thai co Join voi tien trinh nao khong? neu co thi gia tri chinh la ID cua tien trinh ma no Join
 
-    int Exec(char* filename,int pid);        // Tao mot thread moi
-    int GetID();                // Trả về ProcessID của tiến trình gọi thực hiện
-    int GetNumWait();           // Trả về số lượng tiến trình chờ
-
-
-    void JoinWait();            // 1. Tiến trình cha đợi tiến trình con kết thúc
-                        
-    void ExitWait();             // 4. Tiến trình con kết thúc
-
-    void JoinRelease();         // 2. Báo cho tiến trình cha thực thi tiếp
-    void ExitRelease();         // 3. Cho phép tiến trình con kết thúc
-
-    void IncNumWait();          // Tăng số tiến trình chờ
-    void DecNumWait();          // Giảm số tiến trình chờ
-
-    void SetExitCode(int ec);      // Đặt exitcode của tiến trình
-    int GetExitCode();          // Trả về exitcode
-
-    void SetFileName(char* filename);    // Set ten tien trinh
-    char* GetFileName();        // Tra ve ten tien trinh
+	PCB(int id);
+	~PCB();
+	int Exec(char *filename, int pID); //nap chuong trinh co ten luu trong bien filename va processID se la pID
+	int GetID();
+	int GetNumWait();
+	void JoinWait();
+	void ExitWait();
+	void JoinRelease();
+	void ExitRelease();
+	void IncNumWait();
+	void DecNumWait();
+	void SetExitCode(int ec);
+	int GetExitCode();
+	void SetFileName(char* fn);
+	char* GetFileName();
 
 };
 
+void StartProcess_2(int id);
 #endif // PCB_H
