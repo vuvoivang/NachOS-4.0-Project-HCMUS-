@@ -45,6 +45,8 @@ Thread::Thread(char* threadName)
 					// new thread ignores contents 
 					// of machine registers
     }
+    processID = 0;
+    exitStatus = 0;
     space = NULL;
 }
 
@@ -435,3 +437,7 @@ Thread::SelfTest()
     SimpleThread(0);
 }
 
+void Thread::FreeSpace(){ // Giai phong vung nho cho tien trinh
+	if (space != 0)
+		delete space;
+}

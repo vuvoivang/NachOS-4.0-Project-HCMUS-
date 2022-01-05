@@ -88,8 +88,12 @@ class Thread {
 					// must not be running when delete 
 					// is called
 
+    // Them 2 thuoc tinh de quan li
+    int processID;
+    int exitStatus;
+    
     // basic thread operations
-
+    void FreeSpace();
     void Fork(VoidFunctionPtr func, void *arg); 
     				// Make thread run (*func)(arg)
     void Yield();  		// Relinquish the CPU if any 
