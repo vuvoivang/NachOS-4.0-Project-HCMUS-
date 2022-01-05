@@ -49,6 +49,7 @@
 #include "synch.h"
 #include "bitmap.h"
 #include "filesys.h"
+#include "stable.h"
 
 // global variables
 Kernel *kernel;
@@ -56,6 +57,7 @@ Debug *debug;
 FileSystem *fileSystem;
 Semaphore *addrLock;
 Bitmap *gPhysPageBitmap;
+STable *sTab;
 
 //----------------------------------------------------------------------
 // Cleanup
