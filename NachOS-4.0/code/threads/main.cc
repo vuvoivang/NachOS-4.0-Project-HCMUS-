@@ -45,7 +45,16 @@
 #include "main.h"
 #include "openfile.h"
 
+<<<<<<< HEAD
 
+=======
+#include "synch.h"
+#include "bitmap.h"
+#include "filesys.h"
+#include "ptable.h"
+#include "stable.h"
+#include "machine.h"
+>>>>>>> main
 
 // global variables
 Kernel *kernel;
@@ -53,10 +62,8 @@ Debug *debug;
 FileSystem *fileSystem;
 Semaphore *addrLock;
 Bitmap *gPhysPageBitmap;
-PTable *pTab;
+PTable * pTab;
 STable *sTab;
-
-
 
 //----------------------------------------------------------------------
 // Cleanup
@@ -68,6 +75,7 @@ static void Cleanup(int x) {
   delete kernel;
   delete fileSystem; // giai phong fileSystem
   delete addrLock;
+  delete gPhysPageBitmap;
 }
 
 //-------------------------------------------------------------------
@@ -241,9 +249,11 @@ int main(int argc, char **argv) {
 
   kernel->Initialize();
 
-  
+  pTab = new PTable(MAXPROCESS);
+
   // new fileSystem
   fileSystem = new FileSystem();
+  gPhysPageBitmap = new Bitmap(NumPhysPages);
   addrLock = new Semaphore("addrLock", 1);
 
   pTab=new PTable(MAXPROCESS);  
@@ -283,7 +293,11 @@ int main(int argc, char **argv) {
 
 
   if (userProgName != NULL) {
+
     AddrSpace *space = new AddrSpace(userProgName);
+
+   
+
     ASSERT(space != (AddrSpace *)NULL);
     if (space->Load(userProgName)) { // load the program into the space
       space->Execute();              // run the program

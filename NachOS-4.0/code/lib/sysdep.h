@@ -16,12 +16,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include<time.h>
+#include <time.h>
 
 using namespace std;
 
 // Process control: abort, exit, and sleep
 extern void Abort();
+// sua lai
 extern void Exit(int exitCode);
 extern void Delay(int seconds);
 extern void UDelay(unsigned int usec);// rcgood - to avoid spinners.

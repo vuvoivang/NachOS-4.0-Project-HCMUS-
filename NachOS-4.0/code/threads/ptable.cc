@@ -71,7 +71,7 @@ int PTable::ExecUpdate(char* filename)
 	return pID;
 }
 
-int PTable::ExitUpdate(int ec)
+int PTable::ExitUpdate(int exitCode)
 {
 //Kiem tra pID co ton tai khong
 	int pID= kernel->currentThread->processID;
@@ -137,8 +137,8 @@ int PTable::JoinUpdate(int pID)
 	}
 
 	pcb[pID]->ExitRelease();	//cho phep tien trinh con ket thuc
-	
-	return 0;
+	// tra ve exit code
+	return exitCode;
 }
 
 void PTable::Remove(int pID)
