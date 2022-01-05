@@ -1,9 +1,9 @@
 #include "syscall.h"
 
-void main()
+int main()
 {
-    int idProcess;
-    idProcess = Exec("./test/add");
-    PrintString("hello");
+    // int idProcess;
+    // idProcess = Exec("./test/add");
+    // PrintString("hello");
     Halt();
 }
