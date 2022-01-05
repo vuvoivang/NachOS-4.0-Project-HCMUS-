@@ -50,6 +50,8 @@
 #include "bitmap.h"
 #include "filesys.h"
 #include "ptable.h"
+#include "stable.h"
+
 // global variables
 Kernel *kernel;
 Debug *debug;
@@ -57,6 +59,7 @@ FileSystem *fileSystem;
 Semaphore *addrLock;
 Bitmap *gPhysPageBitmap;
 PTable * pTab;
+STable *sTab;
 
 //----------------------------------------------------------------------
 // Cleanup
