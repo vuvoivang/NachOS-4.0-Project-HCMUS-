@@ -44,13 +44,8 @@
 
 #include "main.h"
 #include "openfile.h"
-#include "sysdep.h"
 
-#include "synch.h"
-#include "bitmap.h"
-#include "filesys.h"
-#include "stable.h"
-#include "ptable.h"
+
 
 // global variables
 Kernel *kernel;
@@ -58,8 +53,8 @@ Debug *debug;
 FileSystem *fileSystem;
 Semaphore *addrLock;
 Bitmap *gPhysPageBitmap;
-PTable*pTab;
-STable*sTab;
+PTable *pTab;
+STable *sTab;
 
 
 
@@ -246,10 +241,12 @@ int main(int argc, char **argv) {
 
   kernel->Initialize();
 
+  
   // new fileSystem
   fileSystem = new FileSystem();
   addrLock = new Semaphore("addrLock", 1);
 
+  pTab=new PTable(MAXPROCESS);  
   CallOnUserAbort(Cleanup); // if user hits ctl-C
 
   // at this point, the kernel is ready to do something

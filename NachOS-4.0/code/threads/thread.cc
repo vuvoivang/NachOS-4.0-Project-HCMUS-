@@ -207,7 +207,7 @@ Thread::Yield ()
     
     ASSERT(this == kernel->currentThread);
     
-    DEBUG(dbgThread, "Yielding thread: " << name);
+    DEBUG(dbgThread, "Yielding thread: " <<  name);
     
     nextThread = kernel->scheduler->FindNextToRun();
     if (nextThread != NULL) {

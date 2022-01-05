@@ -16,6 +16,8 @@
 #include "bitmap.h"
 #include "filesys.h"
 #include "sysdep.h"
+#include "ptable.h"
+#include "stable.h"
 
 extern Kernel *kernel;
 extern Debug *debug;
@@ -23,5 +25,11 @@ extern FileSystem *fileSystem;
 extern Semaphore *addrLock;
 extern Bitmap *gPhysPageBitmap;
 //khai bao toan cuc PTable,STable
+
+extern PTable *pTab;
+extern STable *sTab;
+
+
+
 #endif // MAIN_H
 
