@@ -10,7 +10,7 @@ class PCB
 private:
 	Semaphore	*joinsem;	//semaphore cho qua trinh join
 	Semaphore	*exitsem;	//semaphore cho qua trinh exit
-	Semaphore	*mutex;
+	Semaphore	*multex;
 	int		exitcode;
 	Thread		*thread;
 	int		pid; //id cua tien trinh
@@ -19,17 +19,18 @@ private:
 	char     	FileName[32];
 public:
 	int 		parentID;	//ID cua tien trinh cha
-	int		JoinStatus;	//Trang thai co Join voi tien trinh nao khong? neu co thi gia tri chinh la ID cua tien trinh ma no Join
+		//Trang thai co Join voi tien trinh nao khong? neu co thi gia tri chinh la ID cua tien trinh ma no Join
 
 	PCB(int id);
 	~PCB();
+	
 	int Exec(char *filename, int pID); //nap chuong trinh co ten luu trong bien filename va processID se la pID
 	int GetID();
 	int GetNumWait();
-	void JoinWait();
-	void ExitWait();
-	void JoinRelease();
-	void ExitRelease();
+	void JoinWait(); //down joinSem
+	void ExitWait();//down exitSem
+	void JoinRelease();//up joinSem
+	void ExitRelease();//up exitSem
 	void IncNumWait();
 	void DecNumWait();
 	void SetExitCode(int ec);

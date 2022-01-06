@@ -94,9 +94,12 @@ Thread::~Thread()
 void 
 Thread::Fork(VoidFunctionPtr func, void *arg)
 {
+    
     Interrupt *interrupt = kernel->interrupt;
     Scheduler *scheduler = kernel->scheduler;
     IntStatus oldLevel;
+
+    // processID=arg;
     
     DEBUG(dbgThread, "Forking thread: " << name << " f(a): " << (int) func << " " << arg);
     
@@ -106,6 +109,7 @@ Thread::Fork(VoidFunctionPtr func, void *arg)
     scheduler->ReadyToRun(this);	// ReadyToRun assumes that interrupts 
 					// are disabled!
     (void) interrupt->SetLevel(oldLevel);
+    cout<<"\nFork thanh cong  "<<name<<"\n";
 }    
 
 //----------------------------------------------------------------------

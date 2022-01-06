@@ -78,7 +78,7 @@ int Add(int op1, int op2);
 /* Address space control operations: Exit, Exec, Execv, and Join */
 
 /* This user program is done (status = 0 means exited normally). */
-int Exit_Syscall(int exitcode);	
+int Exit_1(int exitStatus);	
 
 /* A unique identifier for an executing user program (address space) */
 typedef int SpaceId;	

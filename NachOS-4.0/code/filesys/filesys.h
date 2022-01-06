@@ -88,6 +88,7 @@ public:
     int fileDescriptor = OpenForReadWrite(name, FALSE);
     if (fileDescriptor == -1)
       return NULL;
+    printf("open file thanh cong\n");
     return new OpenFile(fileDescriptor);
   }
 

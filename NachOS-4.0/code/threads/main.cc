@@ -247,6 +247,7 @@ int main(int argc, char **argv) {
   kernel->Initialize();
 
   pTab = new PTable(MAXPROCESS);
+  sTab=new STable();
 
   // new fileSystem
   fileSystem = new FileSystem();

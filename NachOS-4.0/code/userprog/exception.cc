@@ -555,6 +555,7 @@ void ExceptionHandler(ExceptionType which) {
       return;
     }
     case SC_Open: {
+       
       OpenFile *file;
       int virAddr;
       int type;
@@ -588,6 +589,7 @@ void ExceptionHandler(ExceptionType which) {
         return;
       }
       kernel->machine->WriteRegister(2, -1);
+      printf("OPEN file thanh cong\n");
       // print ko tim dc
       delete[] fileName;
       increasePC();
@@ -802,6 +804,7 @@ void ExceptionHandler(ExceptionType which) {
     }
     case SC_Exec:
     {
+      printf("vo EXEC exception roi\n");
       int virtAddr;
       char* name;
       OpenFile *oFile;
@@ -831,8 +834,9 @@ void ExceptionHandler(ExceptionType which) {
 
 			// Return child process id
 			id = pTab->ExecUpdate(name); 
+      cout<<"\nID bang === "<<id<<"\n";
 			kernel->machine->WriteRegister(2,id);
-
+      cout<<"\nKKKKKK";
 			delete[] name;	
 			increasePC();
 			return;
@@ -843,21 +847,29 @@ void ExceptionHandler(ExceptionType which) {
       // output: exit code cho tien trinh da dang block, err: -1
       // purpose: doi va block dua tren id
     {
-      int pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
-      int result = pTab->JoinUpdate(pID); // join vao tien trinh cha
+      printf("vo exception JOIN roi\n");
+        int pID;
+        int res;
+        
+        pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
+        cout<<"\nDOc ID==="<<pID;
+        res = pTab->JoinUpdate(pID); // join vao tien trinh cha
+        cout<<"\nKet qua tra ve sau khi join la Res= "<<res<<"\n";
       // tra ve ket qua thuc hien
-      kernel->machine->WriteRegister(2, result);
+      kernel->machine->WriteRegister(2, res);
 
       increasePC();
       return;
     }
 
     case SC_Exit: {
+      printf("vo SC_Exit roi \n");
       // input: exit code
       // output: exit code cho tien trinh da join. Thanh cong: 0, err: exit code
-
-      int exitStatus = kernel->machine->ReadRegister(4);
-      int result = pTab->ExitUpdate(exitStatus);
+      int exitStatus;
+      int result;
+      exitStatus = kernel->machine->ReadRegister(4);
+      result = pTab->ExitUpdate(exitStatus);
       kernel->machine->WriteRegister(2, result);
 
       increasePC();

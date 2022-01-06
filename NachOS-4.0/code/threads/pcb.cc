@@ -6,9 +6,9 @@
 
 PCB::PCB(int id)
 {
-	joinsem= new Semaphore("JoinSem",0);
-	exitsem= new Semaphore("ExitSem",0);
-	mutex= new Semaphore("Mutex",1);
+	joinsem= new Semaphore("joinSem",0);
+	exitsem= new Semaphore("exitSem",0);
+	multex= new Semaphore("multex",1);
 	pid= id;
 	exitcode= 0;
 	numwait= 0;
@@ -16,10 +16,10 @@ PCB::PCB(int id)
 		parentID= kernel->currentThread->processID;
 	else {
 		parentID= 0;
-		this->SetFileName("./test/scheduler");
+		
 	}
 	thread= NULL;
-	JoinStatus= -1;
+	
 
 }
 
@@ -29,8 +29,8 @@ PCB::~PCB()
 		delete joinsem;
 	if(exitsem != NULL)
 		delete exitsem;
-	if(mutex != NULL)
-		delete mutex;
+	if(multex != NULL)
+		delete multex;
 }
 
 //------------------------------------------------------------------
@@ -78,14 +78,14 @@ char* PCB::GetFileName()
 //-------------------------------------------------------------------
 void PCB::JoinWait()
 {
-	JoinStatus= parentID;
-	IncNumWait();
+	
+	
 	joinsem->P();
 }
 
 void PCB::JoinRelease()
 {
-	DecNumWait();
+	
 	joinsem->V();
 }
 
@@ -99,32 +99,34 @@ void PCB::ExitRelease()
 	exitsem->V();
 }
 
+// truyen vao filename thuc thi va id cua process de cap nhat cho thread
 //------------------------------------------------------------------
 int PCB::Exec(char *filename, int pID)
 {
-	mutex->P();
+	multex->P();
 	thread= new Thread(filename);
 	if(thread == NULL)
 	{
 		printf("\nLoi: Khong tao duoc tien trinh moi !!!\n");
-		mutex->V();
+		multex->V();
 		return -1;
 	}
-	thread->processID= pID;
+	thread->processID= pID; //update process cua thread
 	thread->Fork((VoidFunctionPtr)StartProcess_2,(void*)pID); // phan than ra then thu 2 de exec
-	mutex->V();
+	multex->V();
 	return pID;
 }
 
 //*************************************************************************************
 
 
+//id cua process trong pTab
 void StartProcess_2(int id) // fork con tro ham den bo nho cua tien trinh con
 {
-    char* fileName = pTab->GetFileName(id);
-
-    AddrSpace *space;
-    space = new AddrSpace(fileName);
+	AddrSpace *space;
+    char* fileName;
+	fileName = pTab->GetName(id);
+    space = new AddrSpace(fileName); // khoi tao space cho thread thuc thi file nay
 
 	if(space == NULL)
 	{
@@ -132,11 +134,13 @@ void StartProcess_2(int id) // fork con tro ham den bo nho cua tien trinh con
 		return;
 	}
 
+	// exec nen thuc thi ngay chinh "Phan Than cua thread"
     kernel->currentThread->space = space;
 
     space->InitRegisters();		
     space->RestoreState();		
 
+	cout<<"\nchay vo StartProcess_2 thanh cong";
     kernel->machine->Run();		
     ASSERT(FALSE);		
 }
