@@ -38,8 +38,8 @@
 #include "sysdep.h"
 
 #define MAX_FILE_OPEN 10
-#define INPUT_TYPE 5 // nhap tu ban phim  5
-#define OUTPUT_TYPE 4 // in ra console  4
+#define INPUT_TYPE 1 
+#define OUTPUT_TYPE 0
 #define READONLY_TYPE 3
 #define READWRITE_TYPE 2 
 #define INDEX_STDIN 1  

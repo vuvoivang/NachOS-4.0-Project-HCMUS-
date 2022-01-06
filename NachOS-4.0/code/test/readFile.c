@@ -1,13 +1,29 @@
 #include "syscall.h"
 
-
 int main()
 {
- 
-  char buffer[255];
-  int size = Read(buffer,255,1);
+  int size;
+  char result[3];
+  int fInId,fOutId;
+  char* buffer = "abc";
+  if(CreateFile("fileYDam.txt")==0){
+    PrintString("Tao file thanh cong nhe!");
+  }
+  else{
+    PrintString("Tao file that bai r :<");
+  }
+  fInId = Open("fileYDam.txt",2);
+  Write(buffer,3,fInId);
+  Close(fInId);
+  fOutId = Open("fileYDam.txt",3);
+  size = Read(result,3,fOutId);
+  PrintChar('\n');
+  PrintNum(fInId);
+  PrintChar('\n');
   PrintNum(size);
-  PrintChar("\n");
-  Write(buffer,255,0);
+  PrintChar('\n');
+  PrintString(result);
+  Close(fOutId);
+  // PrintChar('\n');
   Halt();
 }

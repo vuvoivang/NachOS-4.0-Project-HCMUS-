@@ -626,6 +626,7 @@ void ExceptionHandler(ExceptionType which) {
       // Output: -1: Loi, So byte read thuc su: Thanh cong, -2: Thanh cong
       // Cong dung: Doc file voi tham so la buffer, so ky tu cho phep va id cua
       // file
+      
       int virAddr;   // chua dia chi chuoi buffer
       int charcount; // chua charcount la so ky tu duoc doc
       int id;        // id cua file
@@ -641,7 +642,7 @@ void ExceptionHandler(ExceptionType which) {
       charcount = kernel->machine->ReadRegister(5);
       DEBUG(dbgFile, "\n Reading id.");
       id = kernel->machine->ReadRegister(6);
-
+      
       // Kiem tra file id co hop le
       if (id < 0 || id > MAX_FILE_OPEN) {
         printf("\nInvalid file id.");
@@ -667,9 +668,8 @@ void ExceptionHandler(ExceptionType which) {
       }
 
       // Truong hop file doc duoc
-
-      curPosition = fileSystem->fileTable[id]
-                        ->getCurrentOffset(); // Lay vi tri current position
+     
+      curPosition = fileSystem->fileTable[id]->getCurrentOffset(); // Lay vi tri current position
       buffer = new char[charcount];           //
 
       // Truong hop doc file stdin (id la 0)
@@ -678,8 +678,9 @@ void ExceptionHandler(ExceptionType which) {
         // Su dung ham Read cua lop SynchConsole de doc max charcount byte ->
         // bufffer
         // tra ve so byte thuc su doc duoc
+        
         int size = kernel->synchConsoleIn->Read(buffer, charcount);
-
+      
         System2User(virAddr, size,
                     buffer); // Copy chuoi tu vung nho System Space (buffer)
                              // sang User Space (virAddr) voi buffer co do dai
