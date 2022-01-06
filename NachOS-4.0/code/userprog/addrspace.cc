@@ -97,7 +97,6 @@ AddrSpace::AddrSpace(OpenFile *executable) {
     return;
   }
 
-  // DEBUG('a', "Initializing address space, num pages %d, size %d\n", numPages, size);
 
   // first, set up the translation
   pageTable = new TranslationEntry[numPages];

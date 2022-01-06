@@ -73,6 +73,8 @@ static void Cleanup(int x) {
   delete fileSystem; // giai phong fileSystem
   delete addrLock;
   delete gPhysPageBitmap;
+  delete pTab;
+  delete sTab;
 }
 
 //-------------------------------------------------------------------
@@ -246,12 +248,13 @@ int main(int argc, char **argv) {
 
   kernel->Initialize();
 
-  pTab = new PTable(MAXPROCESS);
-
-  // new fileSystem
+// tao them
   fileSystem = new FileSystem();
-  gPhysPageBitmap = new Bitmap(NumPhysPages);
   addrLock = new Semaphore("addrLock", 1);
+  gPhysPageBitmap = new Bitmap(NumPhysPages);
+  pTab = new PTable(MAXPROCESS);
+  sTab = new STable();
+
 
   CallOnUserAbort(Cleanup); // if user hits ctl-C
 
@@ -292,6 +295,7 @@ int main(int argc, char **argv) {
     AddrSpace *space = new AddrSpace(userProgName);
     ASSERT(space != (AddrSpace *)NULL);
     if (space->Load(userProgName)) { // load the program into the space
+      pTab->SetFileNameMainThread(userProgName);
       space->Execute();              // run the program
       ASSERTNOTREACHED();            // Execute never returns
     }
