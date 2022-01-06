@@ -19,12 +19,17 @@ private:
 public:
 	PTable(int size);		//Khoi tao size doi tuong pcb de luu size process. Gan gia tri ban dau la null. Nho khoi tao *bm va *bmsem de su dung
 	~PTable();			//Huy doi tuong da tao
+
 	int ExecUpdate(char* filename);		//return PID
 	int ExitUpdate(int ec);
 	int JoinUpdate(int pID);
+	
 	int GetFreeSlot();		//Tim slot trong de luu thong tin cho tien trinh moi
 	bool IsExist(int pID); 	//Kiem tra co ton tai process ID nay khong
+	
 	void Remove(int pID); 	//Xoa mot processID ra khoi mang quan ly no, khi ma tien trinh nay da ket thuc
+	
 	char* GetFileName(int id);  // Trả về tên của tiến trình
+	void SetFileNameMainThread(char* filename);
 };
 #endif
