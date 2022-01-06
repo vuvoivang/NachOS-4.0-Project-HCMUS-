@@ -20,6 +20,7 @@
  */
 #define SC_Halt		0
 #define SC_Exit		1
+#define SC_Exit_Syscall 100
 #define SC_Exec		2
 #define SC_Join		3
 #define SC_CreateFile	4
@@ -78,7 +79,7 @@ int Add(int op1, int op2);
 /* Address space control operations: Exit, Exec, Execv, and Join */
 
 /* This user program is done (status = 0 means exited normally). */
-int Exit_Syscall(int exitcode);	
+void Exit(int exitcode);	
 
 /* A unique identifier for an executing user program (address space) */
 typedef int SpaceId;	

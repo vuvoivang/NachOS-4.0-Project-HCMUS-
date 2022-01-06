@@ -843,8 +843,9 @@ void ExceptionHandler(ExceptionType which) {
       // output: exit code cho tien trinh da dang block, err: -1
       // purpose: doi va block dua tren id
     {
-      int pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
-      int result = pTab->JoinUpdate(pID); // join vao tien trinh cha
+      int pID, result;
+      pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
+      result = pTab->JoinUpdate(pID); // join vao tien trinh cha
       // tra ve ket qua thuc hien
       kernel->machine->WriteRegister(2, result);
 
@@ -855,9 +856,9 @@ void ExceptionHandler(ExceptionType which) {
     case SC_Exit: {
       // input: exit code
       // output: exit code cho tien trinh da join. Thanh cong: 0, err: exit code
-
-      int exitStatus = kernel->machine->ReadRegister(4);
-      int result = pTab->ExitUpdate(exitStatus);
+      int exitStatus,result;
+      exitStatus = kernel->machine->ReadRegister(4);
+      result = pTab->ExitUpdate(exitStatus);
       kernel->machine->WriteRegister(2, result);
 
       increasePC();
