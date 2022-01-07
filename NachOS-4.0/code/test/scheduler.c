@@ -3,7 +3,7 @@
 int main()
 {
 	int pingID, pongID,codeJoinPing, codeJoinPong;
-	PrintString("Ping-Pong test starting ...\n\n");
+	//PrintString("Ping-Pong test starting ...\n\n");
 
 	pingID = Exec("../test/ping");
 	pongID = Exec("../test/pong");

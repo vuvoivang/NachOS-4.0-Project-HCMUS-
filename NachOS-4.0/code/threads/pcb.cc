@@ -49,6 +49,7 @@ void PCB::IncNumWait() {
 }
 
 void PCB::DecNumWait() {
+
   multex->P();
   if (numwait > 0)
     --numwait;
@@ -76,7 +77,7 @@ void PCB::ExitRelease() { exitsem->V(); }
 
 //------------------------------------------------------------------
 int PCB::Exec(char *filename, int pID) {
-  printf("\n%d ben trong Exec\n",pID);
+ 
 
   // tránh tình trạng nạp 2 tiến trình cùng 1 lúc
   multex->P();
@@ -95,7 +96,7 @@ int PCB::Exec(char *filename, int pID) {
 
   thread->Fork((VoidFunctionPtr)StartProcess_2,
                (void *)pID); // phan than ra then thu 2 de exec
-  printf("\n%d sau Fork\n",pID);
+ 
   multex->V();
   return pID;
 }
@@ -103,7 +104,7 @@ int PCB::Exec(char *filename, int pID) {
 //*************************************************************************************
 void StartProcess_2(int id) 
 {
-  printf("\n------- id %d", id);
+  
   AddrSpace *space;
   char *fileName = pTab->GetFileName(id);
 
@@ -120,5 +121,6 @@ void StartProcess_2(int id)
   space->RestoreState();
 
   kernel->machine->Run();
+
   ASSERT(FALSE);
 }

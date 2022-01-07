@@ -372,61 +372,17 @@ void ExceptionHandler(ExceptionType which) {
     case SC_PrintString: {
       // input char[]
       // output None
-      int virAddr;   // khai bao bien dia chi de doc tu thanh ghi
-      char *strName; // ten cua chuoi o phia user space
-      int length;    // chieu dai chuoi nguoi dung nhap
-      int temp;      // bien tam de luu
-      char c;
 
-      virAddr = kernel->machine->ReadRegister(4);
-      temp = virAddr;
-
-      length = 0;
-      // tinh chieu dai chuoi ma nguoi dung nhap vao
-      do {
-        kernel->machine->ReadMem(temp, 1, (int *)&c);
-        length++;
-        temp = temp + 1;
-      } while (c != '\0');
-
-      strName = User2System(virAddr,
-                            length); // truyen du lieu qua kernel space de xu ly
-
-      if (strName ==
-          NULL) { // kiem tra Truong hop khong du bo nho trong kernel space
-        printf("\n Not enough memory in system");
-        DEBUG(dbgAddr, "\n Not enough memory in system");
-        kernel->machine->WriteRegister(2, -1); // return error
-        delete strName;
-        increasePC();
-        return;
-      } else {
-        if (strlen(strName) >
-            MAX_LENGTH_STRING) { // kiem tra neu chieu dai chuoi vuot qua quy
-                                 // dinh 1 chuoi cho phep
-          printf("\n out of index");
-
-          kernel->machine->WriteRegister(2, -1); // return error
-          delete strName;
-          increasePC();
-          return;
-        } else if (strlen(strName) == 0) { // nguoi dung ko nhap gi
-          kernel->synchConsoleOut->PutChar('\0');
-          printf("\n chuoi rong");
-          DEBUG(dbgAddr, "\n chuoi rong");
-          increasePC();
-          return;
-        } else {
-          for (int i = 0; i < strlen(strName); i++) {
-            kernel->synchConsoleOut->PutChar(strName[i]);
-          }
-          // printf("\n In chuoi thanh cong.");
-          DEBUG(dbgAddr, "\n In chuoi thanh cong.");
-          increasePC();
-          return;
-        }
-      }
-      break;
+      int virtAddr;
+			char* buffer;
+			virtAddr = kernel->machine->ReadRegister(4); // Lay dia chi cua tham so buffer tu thanh ghi so 4
+			buffer = User2System(virtAddr, 255); // Copy chuoi tu vung nho User Space sang System Space voi bo dem buffer dai 255 ki tu
+			int length = 0;
+			while (buffer[length] != 0) length++; // Dem do dai that cua chuoi
+			kernel->synchConsoleOut->Write(buffer, length + 1); // Goi ham Write cua SynchConsole de in chuoi
+      delete buffer; 
+      increasePC();
+      return;
     }
     case SC_ReadString: {
       // input char[] voi int length
@@ -511,8 +467,9 @@ void ExceptionHandler(ExceptionType which) {
       // input: 1 char
       // output: none
       // muc dich: in ra console 1 ki tu char
-      char c = kernel->machine->ReadRegister(4);
-      kernel->synchConsoleOut->PutChar(c);
+      char c = (char)kernel->machine->ReadRegister(4); // Doc ki tu tu thanh ghi r4
+			kernel->synchConsoleOut->Write(&c, 1); // In ky tu tu bien c, 1 byte
+			
       increasePC();
       return;
     }
@@ -621,11 +578,59 @@ void ExceptionHandler(ExceptionType which) {
       increasePC();
       break;
     }
+    case SC_Seek:
+		{
+			// Input: Vi tri(int), id cua file(OpenFileID)
+			// Output: -1: Loi, Vi tri thuc su: Thanh cong
+			// Cong dung: Di chuyen con tro den vi tri thich hop trong file voi tham so la vi tri can chuyen va id cua file
+			int pos = kernel->machine->ReadRegister(4); // Lay vi tri can chuyen con tro den trong file
+			int id = kernel->machine->ReadRegister(5); // Lay id cua file
+			// Kiem tra id cua file truyen vao co nam ngoai bang mo ta file khong
+			if (id < 0 || id >= 10)
+			{
+				printf("\nKhong the seek vi id nam ngoai bang mo ta file.");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+			}
+			// Kiem tra file co ton tai khong
+			if (fileSystem->fileTable[id] == NULL)
+			{
+				printf("\nKhong the seek vi file nay khong ton tai.");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+			}
+			// Kiem tra co goi Seek tren console khong
+			if (id == 0 || id == 1)
+			{
+				printf("\nKhong the seek tren file console.");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+			}
+			// Neu pos = -1 thi gan pos = Length nguoc lai thi giu nguyen pos
+			pos = (pos == -1) ? fileSystem->fileTable[id]->Length() : pos;
+			if (pos > fileSystem->fileTable[id]->Length() || pos < 0) // Kiem tra lai vi tri pos co hop le khong
+			{
+				printf("\nKhong the seek file den vi tri nay.");
+				kernel->machine->WriteRegister(2, -1);
+			}
+			else
+			{
+				// Neu hop le thi tra ve vi tri di chuyen thuc su trong file
+				fileSystem->fileTable[id]->Seek(pos);
+				kernel->machine->WriteRegister(2, pos);
+			}
+			increasePC();
+			return;
+		}
     case SC_Read: {
       // Input: buffer(char*), so ky tu(int), id cua file(OpenFileID)
       // Output: -1: Loi, So byte read thuc su: Thanh cong, -2: Thanh cong
       // Cong dung: Doc file voi tham so la buffer, so ky tu cho phep va id cua
       // file
+      
       int virAddr;   // chua dia chi chuoi buffer
       int charcount; // chua charcount la so ky tu duoc doc
       int id;        // id cua file
@@ -641,7 +646,7 @@ void ExceptionHandler(ExceptionType which) {
       charcount = kernel->machine->ReadRegister(5);
       DEBUG(dbgFile, "\n Reading id.");
       id = kernel->machine->ReadRegister(6);
-
+      
       // Kiem tra file id co hop le
       if (id < 0 || id > MAX_FILE_OPEN) {
         printf("\nInvalid file id.");
@@ -667,9 +672,8 @@ void ExceptionHandler(ExceptionType which) {
       }
 
       // Truong hop file doc duoc
-
-      curPosition = fileSystem->fileTable[id]
-                        ->getCurrentOffset(); // Lay vi tri current position
+     
+      curPosition = fileSystem->fileTable[id]->getCurrentOffset(); // Lay vi tri current position
       buffer = new char[charcount];           //
 
       // Truong hop doc file stdin (id la 0)
@@ -678,8 +682,9 @@ void ExceptionHandler(ExceptionType which) {
         // Su dung ham Read cua lop SynchConsole de doc max charcount byte ->
         // bufffer
         // tra ve so byte thuc su doc duoc
+        
         int size = kernel->synchConsoleIn->Read(buffer, charcount);
-
+      
         System2User(virAddr, size,
                     buffer); // Copy chuoi tu vung nho System Space (buffer)
                              // sang User Space (virAddr) voi buffer co do dai
@@ -800,6 +805,19 @@ void ExceptionHandler(ExceptionType which) {
         }
       }
     }
+    case SC_Join:
+      // input: SpaceID id
+      // output: exit code cho tien trinh da dang block, err: -1
+      // purpose: doi va block dua tren id
+    {
+      int pID, result;
+      pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
+      result = pTab->JoinUpdate(pID); // join vao tien trinh cha
+      // tra ve ket qua thuc hien
+      kernel->machine->WriteRegister(2, result);
+      increasePC();
+      return;
+    }
     case SC_Exec:
     {
       int virtAddr;
@@ -838,20 +856,8 @@ void ExceptionHandler(ExceptionType which) {
 			return;
 
     }
-    case SC_Join:
-      // input: SpaceID id
-      // output: exit code cho tien trinh da dang block, err: -1
-      // purpose: doi va block dua tren id
-    {
-      int pID, result;
-      pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
-      result = pTab->JoinUpdate(pID); // join vao tien trinh cha
-      // tra ve ket qua thuc hien
-      kernel->machine->WriteRegister(2, result);
-
-      increasePC();
-      return;
-    }
+    
+    
 
     case SC_Exit: {
       // input: exit code
@@ -859,7 +865,7 @@ void ExceptionHandler(ExceptionType which) {
       int exitStatus,result;
       exitStatus = kernel->machine->ReadRegister(4);
       result = pTab->ExitUpdate(exitStatus);
-      kernel->machine->WriteRegister(2, result);
+      //kernel->machine->WriteRegister(2, result);
 
       increasePC();
       return;

@@ -306,6 +306,5 @@ int main(int argc, char **argv) {
   // Instead, call Halt, which will first clean up, then
   //  terminate.
   kernel->interrupt->Halt();
-
   ASSERTNOTREACHED();
 }

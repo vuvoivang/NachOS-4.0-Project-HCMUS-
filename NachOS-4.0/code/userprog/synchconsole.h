@@ -32,7 +32,6 @@ class SynchConsoleInput : public CallBackObj {
     ConsoleInput *consoleInput;	// the hardware keyboard
     Lock *lock;			// only one reader at a time
     Semaphore *waitFor;		// wait for callBack
-    Semaphore *synchReadAvail;
     Semaphore *RLineBlock;
 
     void CallBack();		// called when a keystroke is available
@@ -50,7 +49,6 @@ class SynchConsoleOutput : public CallBackObj {
     ConsoleOutput *consoleOutput;// the hardware display
     Lock *lock;			// only one writer at a time
     Semaphore *waitFor;		// wait for callBack
-    Semaphore *synchWriteAvail;
     Semaphore *WLineBlock;
 
 

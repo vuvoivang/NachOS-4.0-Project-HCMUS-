@@ -82,7 +82,7 @@ int PTable::ExecUpdate(char *filename) {
   bm->Mark(idSlot);
 
   int processID = pcb[idSlot]->Exec(filename, idSlot);
-  printf("\n%d ben ngoai Exec\n",processID);
+ 
 
   delete fileOpen;
   bmsem->V();
@@ -125,7 +125,7 @@ int PTable::ExitUpdate(int exitCode) {
 int PTable::JoinUpdate(int pID) {
 
   if (!IsExist(pID)) {
-    printf("Khong ton tai process id nay!");
+    printf("Khong ton tai process id nay! %d\n", pID);
     return -1;
   }
 
@@ -144,7 +144,7 @@ int PTable::JoinUpdate(int pID) {
   }
   // Tang numwait
   pcb[pcb[pID]->parentID]->IncNumWait();
-
+  
   pcb[pID]->JoinWait(); // Tien trinh cha cho doi cho den khi tien trinh con ket
                         // thuc
 
@@ -161,14 +161,14 @@ int PTable::GetFreeSlot() {
 }
 
 bool PTable::IsExist(int pID) {
-  if (pID < 0 || pID > MAXPROCESS)
+  if (pID < 0 || pID >= MAXPROCESS)
     return 0;
   return bm->Test(pID);
 }
 
 void PTable::Remove(int pID) {
   // Xoa process co id la pID ra khoi PTable
-  if (pID < 0 || pID > MAXPROCESS)
+  if (pID < 0 || pID >= MAXPROCESS)
     return;
   if (bm->Test(pID)) {
     bm->Clear(pID);

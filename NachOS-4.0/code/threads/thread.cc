@@ -94,7 +94,7 @@ Thread::~Thread()
 void 
 Thread::Fork(VoidFunctionPtr func, void *arg)
 {
-    printf("\n forkkk\n");
+   
     Interrupt *interrupt = kernel->interrupt;
     Scheduler *scheduler = kernel->scheduler;
     IntStatus oldLevel;

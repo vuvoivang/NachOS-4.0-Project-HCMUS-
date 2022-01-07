@@ -22,7 +22,6 @@ SynchConsoleInput::SynchConsoleInput(char *inputFile)
     consoleInput = new ConsoleInput(inputFile, this);
     lock = new Lock("console in");
     waitFor = new Semaphore("console in", 0);
-    synchReadAvail = new Semaphore("Synch Read Avail",0);
     RLineBlock = new Semaphore("Read Synch Line Block",1);
 	
 }
@@ -37,7 +36,7 @@ SynchConsoleInput::~SynchConsoleInput()
     delete consoleInput; 
     delete lock; 
     delete waitFor;
-    delete synchReadAvail;
+   
     delete RLineBlock;
 }
 
@@ -89,10 +88,10 @@ SynchConsoleInput::Read(char *into, int numBytes)
 	{
 		do
 		{
-			synchReadAvail->P();		// Block for single char
+			waitFor->P();		// Block for single char
 			ch = consoleInput->GetChar();		// Get a char (could)
 		} while ( ch == EOF);
-
+		
 		if ( (ch == '\012') || (ch == '\001') )
 		{
 			eolncond = TRUE;
@@ -125,7 +124,6 @@ SynchConsoleOutput::SynchConsoleOutput(char *outputFile)
     consoleOutput = new ConsoleOutput(outputFile, this);
     lock = new Lock("console out");
     waitFor = new Semaphore("console out", 0);
-    synchWriteAvail = new Semaphore("Synch Write Avail",0);
 	WLineBlock = new Semaphore("Write Synch Line Block",1);
     
 }
@@ -140,8 +138,6 @@ SynchConsoleOutput::~SynchConsoleOutput()
     delete consoleOutput; 
     delete lock; 
     delete waitFor;
-  
-	delete synchWriteAvail;
 	delete WLineBlock;
 }
 
@@ -181,7 +177,7 @@ int SynchConsoleOutput::Write(char *from, int numBytes)
 	for (loop = 0; loop < numBytes; loop++)
 	{
 		consoleOutput->PutChar(from[loop]);		// Write and wait
-		synchWriteAvail->P();			// Block for a character
+		waitFor->P();			// Block for a character
 	}
 
 	WLineBlock->V();				// Free Up

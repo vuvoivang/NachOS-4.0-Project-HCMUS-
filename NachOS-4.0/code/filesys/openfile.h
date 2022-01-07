@@ -63,6 +63,11 @@ class OpenFile {
     int getType(){
 		return type;
 	}
+	void
+	Seek(int position)
+	{
+		currentOffset = position;
+	}	
   private:
     int file;
     int currentOffset;
