@@ -301,8 +301,6 @@ void ExceptionHandler(ExceptionType which) {
 
       DEBUG(dbgSys, "\nThis is a number");
       kernel->machine->WriteRegister(2, int(res));
-      // printf("Value: %d", res);
-      // cout << "so do la" << res;
 
       increasePC();
       return;
@@ -397,7 +395,6 @@ void ExceptionHandler(ExceptionType which) {
       virAddr = kernel->machine->ReadRegister(
           4); // lay dia chi tu thanh ghi (char buffer[] o user space)
       length = kernel->machine->ReadRegister(5); // lay dia chi tu thanh
-      // cout<<"length "<<length<<" ";
       strName =
           new char[length]; // day se la bien buffer duoc tra ve cho nguoi dung
       inputLength = 0;
@@ -405,15 +402,12 @@ void ExceptionHandler(ExceptionType which) {
         strName[inputLength] = c;
         inputLength++;
       }
-      // cout<<"strName la "<<strName;
       strName[inputLength] = '\0';
 
       int numBytes =
           System2User(virAddr, inputLength, strName); // chuyen bo nho qua user
-      // cout<<"numbyte "<<numBytes;
       if (inputLength > length) {
         printf("\nChuoi nhap co do dai qua lon so voi quy dinh mat roi\n");
-        // cout << strName;
         increasePC();
         return;
       }
@@ -524,7 +518,6 @@ void ExceptionHandler(ExceptionType which) {
       fileName = User2System(virAddr, MAX_LENGTH_FILENAME);
 
       freeSlot = fileSystem->FindFreeSlot();
-      // cout<<freeSlot;
       if (type == INPUT_TYPE) {
         // input console stdin ->system doc gia tri tren man hinh console
         // thong bao day

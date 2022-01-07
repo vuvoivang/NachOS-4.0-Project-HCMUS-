@@ -42,7 +42,6 @@
 #define OUTPUT_TYPE 0
 #define READONLY_TYPE 3
 #define READWRITE_TYPE 2
-#define OVERWRITE_TYPE 4
 #define INDEX_STDIN 1  
 #define INDEX_STDOUT 0 
 #ifdef FILESYS_STUB
