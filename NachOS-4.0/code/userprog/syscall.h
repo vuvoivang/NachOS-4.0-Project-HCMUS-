@@ -129,6 +129,9 @@ typedef int OpenFileId;
 
 #define ABC_ConsoleInput	0  
 #define ABC_ConsoleOutput	1  
+#define ReadWrite 2
+#define ReadOnly 3
+
  
 /* Create a Nachos file, with name "name" */
 /* Note: Create does not open the file.   */
