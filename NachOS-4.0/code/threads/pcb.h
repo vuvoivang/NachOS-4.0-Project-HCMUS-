@@ -20,6 +20,7 @@ private:
 	char     	FileName[32]; // ten tien trinh
 
 public:
+	FileSystem* fileTable;
 	int 		parentID;	//ID cua tien trinh cha
 
 	PCB(int id);

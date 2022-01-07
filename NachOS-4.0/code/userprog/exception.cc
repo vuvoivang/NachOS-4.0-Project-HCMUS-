@@ -121,8 +121,9 @@ int System2User(int virtAddr, int len, char *buffer) {
 
 void ExceptionHandler(ExceptionType which) {
   int type = kernel->machine->ReadRegister(2);
-
   DEBUG(dbgSys, "Received Exception " << which << " type: " << type << "\n");
+  FileSystem* fileSystem = pTab->getFileTable(kernel->currentThread->processID);
+  
 
   switch (which) {
   case NoException:
@@ -534,8 +535,9 @@ void ExceptionHandler(ExceptionType which) {
         // console
         kernel->machine->WriteRegister(2, 1);
       }
-      if (freeSlot != -1) {
+      else if (freeSlot != -1) {
         file = fileSystem->Open(fileName, type);
+       
         if (file != NULL) {
           fileSystem->fileTable[freeSlot] = file;
           kernel->machine->WriteRegister(2, freeSlot);
@@ -555,8 +557,7 @@ void ExceptionHandler(ExceptionType which) {
       file_Id = -1;
       file_Id = kernel->machine->ReadRegister(4);
 
-      if (file_Id >= 2 && file_Id <= 9) {
-
+      if (file_Id >= 2 && file_Id <= MAX_FILE_OPEN-1) {
         if (fileSystem->fileTable[file_Id] != NULL) {
 
           delete fileSystem->fileTable[file_Id];
@@ -586,7 +587,7 @@ void ExceptionHandler(ExceptionType which) {
 			int pos = kernel->machine->ReadRegister(4); // Lay vi tri can chuyen con tro den trong file
 			int id = kernel->machine->ReadRegister(5); // Lay id cua file
 			// Kiem tra id cua file truyen vao co nam ngoai bang mo ta file khong
-			if (id < 0 || id >= 10)
+			if (id < 0 || id >= MAX_FILE_OPEN)
 			{
 				printf("\nKhong the seek vi id nam ngoai bang mo ta file.");
 				kernel->machine->WriteRegister(2, -1);

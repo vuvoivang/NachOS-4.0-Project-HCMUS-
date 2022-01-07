@@ -136,6 +136,7 @@ AddrSpace::AddrSpace(OpenFile *executable) {
 AddrSpace::AddrSpace(char *filename) {
   NoffHeader noffH;
   unsigned int i, size;
+  FileSystem* fileSystem = pTab->getFileTable(kernel->currentThread->processID);
 
   OpenFile *executable = fileSystem->Open(filename);
 
@@ -236,6 +237,7 @@ AddrSpace::~AddrSpace() {
 //----------------------------------------------------------------------
 
 bool AddrSpace::Load(char *fileName) {
+  
   OpenFile *executable = kernel->fileSystem->Open(fileName);
   NoffHeader noffH;
   unsigned int size;

@@ -70,7 +70,6 @@ STable *sTab;
 static void Cleanup(int x) {
   cerr << "\nCleaning up after signal " << x << "\n";
   delete kernel;
-  delete fileSystem; // giai phong fileSystem
   delete addrLock;
   delete gPhysPageBitmap;
   delete pTab;
@@ -249,7 +248,7 @@ int main(int argc, char **argv) {
   kernel->Initialize();
 
 // tao them
-  fileSystem = new FileSystem();
+  
   addrLock = new Semaphore("addrLock", 1);
   gPhysPageBitmap = new Bitmap(NumPhysPages);
   pTab = new PTable(MAXPROCESS);

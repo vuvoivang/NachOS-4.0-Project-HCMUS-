@@ -21,7 +21,7 @@ void main()
 		Wait("m_vn");
 
 		// Mo file result.txt de ghi voi nao su dung
-		si_result = Open("result.txt", 0);
+		si_result = Open("result.txt", 2);
 		if(si_result == -1)
 		{		//?
 			Signal("sinhvien");
@@ -33,7 +33,9 @@ void main()
 			Wait("voinuoc");
 			c_readFile = 0;			
 			// Mo file voi nuoc .txt de doc dung tich
-			si_voinuoc = Open("voinuoc.txt", 1);
+			si_voinuoc = Open("voinuoc.txt", 3);
+			// PrintString("Si voi nuoc cua voi nuoc: ");
+			// PrintNum(si_voinuoc);
 			if(si_voinuoc == -1)
 			{
 				//?
@@ -55,7 +57,7 @@ void main()
 				}
 				if(c_readFile != '*')
 				{
-					v = v* 10 + (c_readFile - 48);
+					v = v* 10 + (c_readFile - '0');
 				}
 				else
 				{
@@ -66,6 +68,7 @@ void main()
 			
 			}
 			// WHILE(3333333333333333333333333333333333333333333333)
+			//PrintNum(v);
 			if(v!= 0)
 			{
 				// Dung voi 1

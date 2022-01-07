@@ -1,0 +1,52 @@
+  cout << "ID: "<<kernel->currentThread->processID;
+Mo file: 2
+
+Mo file: 3
+
+
+Size: 2560 | numPages: 5 | PageSize: 512 | Numclear: 122
+
+Physic Pages 6 
+Physic Pages 7 
+Physic Pages 8 
+Physic Pages 9 
+Physic Pages 10 
+
+
+Size: 2560 | numPages: 5 | PageSize: 512 | Numclear: 117
+
+Physic Pages 11 
+Physic Pages 12 
+Physic Pages 13 
+Physic Pages 14 
+Physic Pages 15 
+
+Mo file: 2
+
+Mo file: 4
+
+Dong file: 4
+
+Mo file: 2
+
+Mo file: 3
+
+Dong file: 3
+
+Mo file: 3
+
+Dong file: 3
+
+Dong file: 2
+
+Mo file: 3
+
+Mo file: 4
+
+ Lan thu: 0
+
+Dong file: 4
+
+Dong file: 2
+
+Dong file: 3
