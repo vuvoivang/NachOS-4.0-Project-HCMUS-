@@ -55,6 +55,7 @@ int PTable::ExecUpdate(char *filename) {
   }
 
   // Kiem tra mo file
+  
   FileSystem* fileSystem = pTab->getFileTable(kernel->currentThread->processID);
   OpenFile *fileOpen = fileSystem->Open(filename);
   // Khong mo duoc

@@ -31,8 +31,8 @@ void main()
 
 		// Mo file sinhvien.txt len de doc
 		si_sinhvien = Open("sinhvien.txt", 3);
-		PrintString("Si sinh vien cua sinh vien: ");
-		PrintNum(si_sinhvien);
+		// PrintString("Si sinh vien cua sinh vien: ");
+		// PrintNum(si_sinhvien);
 		if(si_sinhvien == -1)
 		{
 			Signal("main"); // tro ve tien trinh chinh
@@ -55,8 +55,8 @@ void main()
 
 		// Mo file voinuoc.txt de ghi tung dung tich nuoc cua sinhvien
 		si_voinuoc = Open("voinuoc.txt", 2);
-		PrintString("Si voi nuoc cua sinh vien: ");
-		PrintNum(si_voinuoc);
+		// PrintString("Si voi nuoc cua sinh vien: ");
+		// PrintNum(si_voinuoc);
 		if(si_voinuoc == -1)
 		{
 			Close(si_sinhvien);
@@ -105,8 +105,8 @@ void main()
 
 				// Mo file voinuoc.txt de ghi tung dung tich nuoc cua sinhvien
 				si_voinuoc = Open("voinuoc.txt", 2);
-				PrintString("\n Si voi nuoc cua sinh vien: ");
-				PrintNum(si_voinuoc);
+				// PrintString("\n Si voi nuoc cua sinh vien: ");
+				// PrintNum(si_voinuoc);
 
 				if(si_voinuoc == -1)
 				{

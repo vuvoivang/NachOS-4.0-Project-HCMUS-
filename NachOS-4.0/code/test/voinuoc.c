@@ -34,8 +34,8 @@ void main()
 			c_readFile = 0;			
 			// Mo file voi nuoc .txt de doc dung tich
 			si_voinuoc = Open("voinuoc.txt", 3);
-			PrintString("Si voi nuoc cua voi nuoc: ");
-			PrintNum(si_voinuoc);
+			// PrintString("Si voi nuoc cua voi nuoc: ");
+			// PrintNum(si_voinuoc);
 			if(si_voinuoc == -1)
 			{
 				//?

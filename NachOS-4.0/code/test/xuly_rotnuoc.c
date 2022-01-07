@@ -98,8 +98,8 @@ int main()
 		
 		// Mo file sinhvien.txt de ghi tung dong sinhvien tu file input.txt
 		si_sinhvien = Open("sinhvien.txt", 2);
-		PrintString("Si sinh vien cua xuly: ");
-		PrintNum(si_sinhvien);
+		// PrintString("Si sinh vien cua xuly: ");
+		// PrintNum(si_sinhvien);
 		if(si_sinhvien == -1)
 		{
 			Close(si_input);
