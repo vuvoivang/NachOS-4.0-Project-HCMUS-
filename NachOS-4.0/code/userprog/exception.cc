@@ -121,8 +121,8 @@ int System2User(int virtAddr, int len, char *buffer) {
 
 void ExceptionHandler(ExceptionType which) {
   int type = kernel->machine->ReadRegister(2);
-
   DEBUG(dbgSys, "Received Exception " << which << " type: " << type << "\n");
+  FileSystem* fileSystem = pTab->getFileTable(kernel->currentThread->processID);
 
   switch (which) {
   case NoException:

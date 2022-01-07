@@ -31,5 +31,6 @@ public:
 	
 	char* GetFileName(int id);  // Trả về tên của tiến trình
 	void SetFileNameMainThread(char* filename);
+	FileSystem* getFileTable(int id);
 };
 #endif

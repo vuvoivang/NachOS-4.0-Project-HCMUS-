@@ -21,7 +21,6 @@
 
 extern Kernel *kernel;
 extern Debug *debug;
-extern FileSystem *fileSystem;
 extern Semaphore *addrLock;
 extern Bitmap *gPhysPageBitmap;
 extern PTable *pTab;

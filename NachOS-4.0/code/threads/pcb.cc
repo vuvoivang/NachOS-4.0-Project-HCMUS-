@@ -17,6 +17,7 @@ PCB::PCB(int id) {
   this->joinsem = new Semaphore("joinsem", 0);
   this->exitsem = new Semaphore("exitsem", 0);
   this->multex = new Semaphore("multex", 1);
+  this->fileTable = new FileSystem();
 }
 
 PCB::~PCB() {
@@ -26,10 +27,13 @@ PCB::~PCB() {
     delete exitsem;
   if (multex != NULL)
     delete multex;
-
   if (thread != NULL) {
     thread->FreeSpace();
     thread->Finish();
+  }
+  if(fileTable != NULL){
+      delete fileTable;
+
   }
 }
 

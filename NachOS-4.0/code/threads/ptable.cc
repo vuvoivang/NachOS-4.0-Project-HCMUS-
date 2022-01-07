@@ -7,9 +7,9 @@ PTable::PTable(int size) {
   // khoi tao bm va bmsem de su dung
   bm = new Bitmap(size);
   bmsem = new Semaphore("Bitmapsem", 1);
-
   for (i = 0; i < MAXPROCESS; i++)
     pcb[i] = NULL;
+    
 
   bm->Mark(0);
 
@@ -55,6 +55,7 @@ int PTable::ExecUpdate(char *filename) {
   }
 
   // Kiem tra mo file
+  FileSystem* fileSystem = pTab->getFileTable(kernel->currentThread->processID);
   OpenFile *fileOpen = fileSystem->Open(filename);
   // Khong mo duoc
   if (fileOpen == NULL) {
@@ -176,3 +177,7 @@ void PTable::Remove(int pID) {
   }
 }
 char *PTable::GetFileName(int id) { return (pcb[id]->GetFileName()); }
+
+FileSystem* PTable::getFileTable(int id){
+  return pcb[id]->fileTable;
+}

@@ -37,7 +37,7 @@
 #include "openfile.h"
 #include "sysdep.h"
 
-#define MAX_FILE_OPEN 20
+#define MAX_FILE_OPEN 10
 #define INPUT_TYPE 1 
 #define OUTPUT_TYPE 0
 #define READONLY_TYPE 3
