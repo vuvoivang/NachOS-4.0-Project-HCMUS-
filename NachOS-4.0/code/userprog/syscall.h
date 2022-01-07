@@ -46,6 +46,11 @@
 #define SC_ReadString 50
 #define SC_PrintString 51
 
+// syscall semaphore
+#define SC_CreateSemaphore	60
+#define SC_Wait	61
+#define SC_Signal	62
+
 
 #ifndef IN_ASM
 
@@ -190,6 +195,12 @@ int ThreadJoin(ThreadId id);
  * Deletes current thread and returns ExitCode to every waiting lokal thread.
  */
 void ThreadExit(int ExitCode);	
+
+// semaphore
+// Success: 0 - Failed: -1
+int CreateSemaphore(char* name, int semval);
+int Wait(char* name);
+int Signal(char* name);
 
 #endif /* IN_ASM */
 
