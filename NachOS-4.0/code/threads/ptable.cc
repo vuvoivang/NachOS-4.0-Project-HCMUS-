@@ -143,7 +143,7 @@ int PTable::JoinUpdate(int pID) {
   }
   // Tang numwait
   pcb[pcb[pID]->parentID]->IncNumWait();
-
+  
   pcb[pID]->JoinWait(); // Tien trinh cha cho doi cho den khi tien trinh con ket
                         // thuc
 

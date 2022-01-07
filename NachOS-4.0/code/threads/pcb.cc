@@ -49,6 +49,7 @@ void PCB::IncNumWait() {
 }
 
 void PCB::DecNumWait() {
+
   multex->P();
   if (numwait > 0)
     --numwait;
@@ -120,5 +121,6 @@ void StartProcess_2(int id)
   space->RestoreState();
 
   kernel->machine->Run();
+
   ASSERT(FALSE);
 }

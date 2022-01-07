@@ -372,61 +372,17 @@ void ExceptionHandler(ExceptionType which) {
     case SC_PrintString: {
       // input char[]
       // output None
-      int virAddr;   // khai bao bien dia chi de doc tu thanh ghi
-      char *strName; // ten cua chuoi o phia user space
-      int length;    // chieu dai chuoi nguoi dung nhap
-      int temp;      // bien tam de luu
-      char c;
 
-      virAddr = kernel->machine->ReadRegister(4);
-      temp = virAddr;
-
-      length = 0;
-      // tinh chieu dai chuoi ma nguoi dung nhap vao
-      do {
-        kernel->machine->ReadMem(temp, 1, (int *)&c);
-        length++;
-        temp = temp + 1;
-      } while (c != '\0');
-
-      strName = User2System(virAddr,
-                            length); // truyen du lieu qua kernel space de xu ly
-
-      if (strName ==
-          NULL) { // kiem tra Truong hop khong du bo nho trong kernel space
-        printf("\n Not enough memory in system");
-        DEBUG(dbgAddr, "\n Not enough memory in system");
-        kernel->machine->WriteRegister(2, -1); // return error
-        delete strName;
-        increasePC();
-        return;
-      } else {
-        if (strlen(strName) >
-            MAX_LENGTH_STRING) { // kiem tra neu chieu dai chuoi vuot qua quy
-                                 // dinh 1 chuoi cho phep
-          printf("\n out of index");
-
-          kernel->machine->WriteRegister(2, -1); // return error
-          delete strName;
-          increasePC();
-          return;
-        } else if (strlen(strName) == 0) { // nguoi dung ko nhap gi
-          kernel->synchConsoleOut->PutChar('\0');
-          printf("\n chuoi rong");
-          DEBUG(dbgAddr, "\n chuoi rong");
-          increasePC();
-          return;
-        } else {
-          for (int i = 0; i < strlen(strName); i++) {
-            kernel->synchConsoleOut->PutChar(strName[i]);
-          }
-          // printf("\n In chuoi thanh cong.");
-          DEBUG(dbgAddr, "\n In chuoi thanh cong.");
-          increasePC();
-          return;
-        }
-      }
-      break;
+      int virtAddr;
+			char* buffer;
+			virtAddr = kernel->machine->ReadRegister(4); // Lay dia chi cua tham so buffer tu thanh ghi so 4
+			buffer = User2System(virtAddr, 255); // Copy chuoi tu vung nho User Space sang System Space voi bo dem buffer dai 255 ki tu
+			int length = 0;
+			while (buffer[length] != 0) length++; // Dem do dai that cua chuoi
+			kernel->synchConsoleOut->Write(buffer, length + 1); // Goi ham Write cua SynchConsole de in chuoi
+      delete buffer; 
+      increasePC();
+      return;
     }
     case SC_ReadString: {
       // input char[] voi int length
@@ -511,8 +467,9 @@ void ExceptionHandler(ExceptionType which) {
       // input: 1 char
       // output: none
       // muc dich: in ra console 1 ki tu char
-      char c = kernel->machine->ReadRegister(4);
-      kernel->synchConsoleOut->PutChar(c);
+      char c = (char)kernel->machine->ReadRegister(4); // Doc ki tu tu thanh ghi r4
+			kernel->synchConsoleOut->Write(&c, 1); // In ky tu tu bien c, 1 byte
+			//IncreasePC();
       increasePC();
       return;
     }
@@ -801,6 +758,22 @@ void ExceptionHandler(ExceptionType which) {
         }
       }
     }
+    case SC_Join:
+      // input: SpaceID id
+      // output: exit code cho tien trinh da dang block, err: -1
+      // purpose: doi va block dua tren id
+    {
+      int pID, result;
+      
+
+      pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
+      result = pTab->JoinUpdate(pID); // join vao tien trinh cha
+      // tra ve ket qua thuc hien
+      kernel->machine->WriteRegister(2, result);
+      pTab->ExitUpdate(pID);
+      increasePC();
+      return;
+    }
     case SC_Exec:
     {
       int virtAddr;
@@ -839,20 +812,8 @@ void ExceptionHandler(ExceptionType which) {
 			return;
 
     }
-    case SC_Join:
-      // input: SpaceID id
-      // output: exit code cho tien trinh da dang block, err: -1
-      // purpose: doi va block dua tren id
-    {
-      int pID, result;
-      pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
-      result = pTab->JoinUpdate(pID); // join vao tien trinh cha
-      // tra ve ket qua thuc hien
-      kernel->machine->WriteRegister(2, result);
-
-      increasePC();
-      return;
-    }
+    
+    
 
     case SC_Exit: {
       // input: exit code
@@ -860,7 +821,7 @@ void ExceptionHandler(ExceptionType which) {
       int exitStatus,result;
       exitStatus = kernel->machine->ReadRegister(4);
       result = pTab->ExitUpdate(exitStatus);
-      kernel->machine->WriteRegister(2, result);
+      //kernel->machine->WriteRegister(2, result);
 
       increasePC();
       return;
