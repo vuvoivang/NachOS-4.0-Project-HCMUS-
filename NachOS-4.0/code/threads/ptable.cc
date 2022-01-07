@@ -97,12 +97,11 @@ int PTable::ExitUpdate(int exitCode) {
   // Doi 1 chut so voi code, theo pdf
 
   // Main process: goi Halt
-  kernel->currentThread->FreeSpace();
   if (processID == 0) {
+    kernel->currentThread->FreeSpace();
     kernel->interrupt->Halt();
     return 0;
   }
-  kernel->currentThread->Finish();
 
   if (!IsExist(processID)) {
     printf("\nTien trinh khong ton tai !!!\n");
@@ -118,6 +117,8 @@ int PTable::ExitUpdate(int exitCode) {
   // Xin phep tien trinh cha ket thuc
   pcb[processID]->ExitWait();
   Remove(processID);
+  kernel->currentThread->FreeSpace();
+  // kernel->currentThread->Finish();
   return exitCode;
 }
 

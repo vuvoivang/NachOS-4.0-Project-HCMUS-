@@ -4,4 +4,6 @@ int main()
 	int i;
 	for (i = 0; i < 20; i++)
 		PrintChar('B');
+	// Exit(1);
+	// return 0;
 }
