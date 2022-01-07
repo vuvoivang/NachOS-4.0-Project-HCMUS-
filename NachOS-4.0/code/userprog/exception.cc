@@ -864,6 +864,99 @@ void ExceptionHandler(ExceptionType which) {
       increasePC();
       return;
     }
+    case SC_CreateSemaphore: {
+      // int CreateSemaphore(char* name, int semval).
+      int virtAddr = kernel->machine->ReadRegister(4);
+      int semval = kernel->machine->ReadRegister(5);
+
+      char *name = User2System(virtAddr, MAX_LENGTH_FILENAME + 1);
+      if (name == NULL) {
+        DEBUG('a', "\n Not enough memory in System");
+        printf("\n Not enough memory in System");
+        kernel->machine->WriteRegister(2, -1);
+        delete name;
+        increasePC();
+        return;
+      }
+
+      int res = sTab->Create(name, semval);
+
+      if (res == -1) {
+        DEBUG('a', "\n Khong the khoi tao semaphore");
+        printf("\n Khong the khoi tao semaphore");
+        kernel->machine->WriteRegister(2, -1);
+        delete name;
+        increasePC();
+        return;
+      }
+
+      delete name;
+      kernel->machine->WriteRegister(2, res);
+      increasePC();
+      return;
+    }
+
+    case SC_Wait: {
+      // int Wait(char* name)
+      int virtAddr = kernel->machine->ReadRegister(4);
+
+      char *name = User2System(virtAddr, MAX_LENGTH_FILENAME + 1);
+      if (name == NULL) {
+        DEBUG('a', "\n Not enough memory in System");
+        printf("\n Not enough memory in System");
+        kernel->machine->WriteRegister(2, -1);
+        delete name;
+        increasePC();
+        return;
+      }
+
+      int res = sTab->Wait(name);
+
+      if (res == -1) {
+        DEBUG('a', "\n Khong ton tai ten semaphore nay!");
+        printf("\n Khong ton tai ten semaphore nay!");
+        kernel->machine->WriteRegister(2, -1);
+        delete name;
+        increasePC();
+        return;
+      }
+
+      delete name;
+      kernel->machine->WriteRegister(2, res);
+      increasePC();
+      return;
+    }
+    case SC_Signal: {
+      // int Signal(char* name)
+      int virtAddr = kernel->machine->ReadRegister(4);
+
+      char *name = User2System(virtAddr, MAX_LENGTH_FILENAME + 1);
+      if (name == NULL) {
+        DEBUG('a', "\n Not enough memory in System");
+        printf("\n Not enough memory in System");
+        kernel->machine->WriteRegister(2, -1);
+        delete name;
+        increasePC();
+        return;
+      }
+
+      int res = sTab->Signal(name);
+
+      if (res == -1) {
+        DEBUG('a', "\n Khong ton tai ten semaphore nay!");
+        printf("\n Khong ton tai ten semaphore nay!");
+        kernel->machine->WriteRegister(2, -1);
+        delete name;
+        increasePC();
+        return;
+      }
+
+      delete name;
+      kernel->machine->WriteRegister(2, res);
+      increasePC();
+      return;
+    }
+    
     default:
       cerr << "Unexpected system call " << type << "\n";
       break;
