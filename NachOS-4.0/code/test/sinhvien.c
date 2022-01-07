@@ -30,7 +30,7 @@ void main()
 		}
 
 		// Mo file sinhvien.txt len de doc
-		si_sinhvien = Open("sinhvien.txt", 1);
+		si_sinhvien = Open("sinhvien.txt", 3);
 		if(si_sinhvien == -1)
 		{
 			Signal("main"); // tro ve tien trinh chinh
@@ -40,7 +40,7 @@ void main()
 		lengthFile = Seek(-1, si_sinhvien);
 		Seek(0, si_sinhvien);
 		i_File = 0;
-	
+		
 		// Tao file voinuoc.txt
 		f_Success = CreateFile("voinuoc.txt");
 		if(f_Success == -1)
@@ -52,7 +52,7 @@ void main()
 		
 
 		// Mo file voinuoc.txt de ghi tung dung tich nuoc cua sinhvien
-		si_voinuoc = Open("voinuoc.txt", 0);
+		si_voinuoc = Open("voinuoc.txt", 2);
 		if(si_voinuoc == -1)
 		{
 			Close(si_sinhvien);
@@ -69,10 +69,12 @@ void main()
 			{
 				Write(&c_readFile, 1, si_voinuoc);
 			}
+			
 			else
 			{
 				flag_VN = 1;
 			}
+			//PrintChar(c_readFile);
 			if(i_File == lengthFile - 1)
 			{
 				Write("*", 1, si_voinuoc);
@@ -87,7 +89,7 @@ void main()
 				// Dung chuong trinh sinhvien lai de voinuoc thuc thi
 				Wait("sinhvien");
 				
-				// Tao file voinuoc.txt
+				//Tao file voinuoc.txt
 				f_Success = CreateFile("voinuoc.txt");
 				if(f_Success == -1)
 				{
@@ -98,7 +100,10 @@ void main()
 		
 
 				// Mo file voinuoc.txt de ghi tung dung tich nuoc cua sinhvien
-				si_voinuoc = Open("voinuoc.txt", 0);
+				si_voinuoc = Open("voinuoc.txt", 2);
+				PrintString("\n Si voi nuoc: ");
+				PrintNum(si_voinuoc);
+
 				if(si_voinuoc == -1)
 				{
 					Close(si_sinhvien);
@@ -107,6 +112,7 @@ void main()
 				}
 				
 			}
+			
 			i_File++;			
 							
 		}				

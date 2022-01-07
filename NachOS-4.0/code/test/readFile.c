@@ -16,7 +16,8 @@ int main()
   Write(buffer,3,fInId);
   Close(fInId);
   fOutId = Open("fileYDam.txt",3);
-  size = Read(result,3,fOutId);
+  Seek(1,fOutId);
+  size = Read(result,1,fOutId);
   PrintChar('\n');
   PrintNum(fInId);
   PrintChar('\n');

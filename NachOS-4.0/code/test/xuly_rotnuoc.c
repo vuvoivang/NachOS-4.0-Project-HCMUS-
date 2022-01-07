@@ -36,12 +36,12 @@ int main()
 		return 1;
 	
 	// Mo file input.txt chi de doc
-	si_input = Open("input.txt", 1);
+	si_input = Open("input.txt", 3);
 	if(si_input == -1)
 		return 1;
 	
 	// Mo file output.txt de doc va ghi
-	si_output = Open("output.txt", 0);
+	si_output = Open("output.txt", 2);
 	if(si_output == -1)
 	{
 		Close(si_input);
@@ -72,8 +72,7 @@ int main()
 		Close(si_output);
 		return 1;
 	}
-	PrintNum(f_Success);
-	PrintChar('\n');
+	
 	// Goi thuc thi tien trinh voinuoc.c
 	f_Success = Exec("../test/voinuoc");
 	if(f_Success == -1)
@@ -82,8 +81,7 @@ int main()
 		Close(si_output);
 		return 1;
 	}
-	PrintNum(f_Success);
-	PrintChar('\n');
+	
 
 
 	// Thuc hien xu ly khi nao het thoi diem xet thi thoi
@@ -99,7 +97,7 @@ int main()
 		}
 		
 		// Mo file sinhvien.txt de ghi tung dong sinhvien tu file input.txt
-		si_sinhvien = Open("sinhvien.txt", 0);
+		si_sinhvien = Open("sinhvien.txt", 2);
 		if(si_sinhvien == -1)
 		{
 			Close(si_input);
@@ -111,6 +109,7 @@ int main()
 			if(Read(&c_readFile, 1, si_input) < 1)
 			{
 				// Doc toi cuoi file
+				
 				break;
 			}
 			if(c_readFile != '\n')
@@ -131,7 +130,7 @@ int main()
 		Wait("main");	
 		
 		// Thuc hien doc file tu result va ghi vao ket qua o output.txt
-		si_result = Open("result.txt", 1);
+		si_result = Open("result.txt", 3);
 		if(si_result == -1)
 		{
 			Close(si_input);
