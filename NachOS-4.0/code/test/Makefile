@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = add halt shell matmult sort segments printString readString readNum printNum randomNum readChar printChar help ascii my_sort createFile openFile closeFile readFile ping pong scheduler student watertap wartersystem_main
+PROGRAMS = add halt shell matmult sort segments printString readString readNum printNum randomNum readChar printChar help ascii my_sort createFile openFile closeFile readFile ping pong scheduler student watertap watersystem_main
 endif
 
 all: $(PROGRAMS)
@@ -277,11 +277,11 @@ watertap: watertap.o start.o
 	$(LD) $(LDFLAGS) start.o watertap.o -o watertap.coff
 	$(COFF2NOFF) watertap.coff watertap
 
-wartersystem_main.o: wartersystem_main.c
-	$(CC) $(CFLAGS) -c wartersystem_main.c
-wartersystem_main: wartersystem_main.o start.o
-	$(LD) $(LDFLAGS) start.o wartersystem_main.o -o wartersystem_main.coff
-	$(COFF2NOFF) wartersystem_main.coff wartersystem_main
+watersystem_main.o: watersystem_main.c
+	$(CC) $(CFLAGS) -c watersystem_main.c
+watersystem_main: watersystem_main.o start.o
+	$(LD) $(LDFLAGS) start.o watersystem_main.o -o watersystem_main.coff
+	$(COFF2NOFF) watersystem_main.coff watersystem_main
 clean:
 	$(RM) -f *.o *.ii
 	$(RM) -f *.coff
