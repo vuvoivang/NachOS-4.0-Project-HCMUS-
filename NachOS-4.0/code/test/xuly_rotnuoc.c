@@ -65,22 +65,26 @@ int main()
 
 
 	// Goi thuc thi tien trinh sinhvien.c
-	f_Success = Exec("./test/sinhvien");
+	f_Success = Exec("../test/sinhvien");
 	if(f_Success == -1)
 	{
 		Close(si_input);
 		Close(si_output);
 		return 1;
 	}
-
+	PrintNum(f_Success);
+	PrintChar('\n');
 	// Goi thuc thi tien trinh voinuoc.c
-	f_Success = Exec("./test/voinuoc");
+	f_Success = Exec("../test/voinuoc");
 	if(f_Success == -1)
 	{
 		Close(si_input);
 		Close(si_output);
 		return 1;
 	}
+	PrintNum(f_Success);
+	PrintChar('\n');
+
 
 	// Thuc hien xu ly khi nao het thoi diem xet thi thoi
 	while(SLTD--)
@@ -136,7 +140,7 @@ int main()
 		}
 
 		PrintString("\n Lan thu: ");
-		PrintInt(SLTD);
+		PrintNum(SLTD);
 		PrintString("\n");	
 
 		// Doc cac voi vao output.txt		

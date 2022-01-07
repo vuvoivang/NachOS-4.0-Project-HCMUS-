@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = add halt shell matmult sort segments printString readString readNum printNum randomNum readChar printChar help ascii my_sort createFile openFile closeFile readFile ping pong scheduler
+PROGRAMS = add halt shell matmult sort segments printString readString readNum printNum randomNum readChar printChar help ascii my_sort createFile openFile closeFile readFile ping pong scheduler sinhvien voinuoc xuly_rotnuoc
 endif
 
 all: $(PROGRAMS)
@@ -265,6 +265,23 @@ scheduler: scheduler.o start.o
 	$(LD) $(LDFLAGS) start.o scheduler.o -o scheduler.coff
 	$(COFF2NOFF) scheduler.coff scheduler
 
+sinhvien.o: sinhvien.c
+	$(CC) $(CFLAGS) -c sinhvien.c
+sinhvien: sinhvien.o start.o
+	$(LD) $(LDFLAGS) start.o sinhvien.o -o sinhvien.coff
+	$(COFF2NOFF) sinhvien.coff sinhvien
+
+voinuoc.o: voinuoc.c
+	$(CC) $(CFLAGS) -c voinuoc.c
+voinuoc: voinuoc.o start.o
+	$(LD) $(LDFLAGS) start.o voinuoc.o -o voinuoc.coff
+	$(COFF2NOFF) voinuoc.coff voinuoc
+
+xuly_rotnuoc.o: xuly_rotnuoc.c
+	$(CC) $(CFLAGS) -c xuly_rotnuoc.c
+xuly_rotnuoc: xuly_rotnuoc.o start.o
+	$(LD) $(LDFLAGS) start.o xuly_rotnuoc.o -o xuly_rotnuoc.coff
+	$(COFF2NOFF) xuly_rotnuoc.coff xuly_rotnuoc
 clean:
 	$(RM) -f *.o *.ii
 	$(RM) -f *.coff

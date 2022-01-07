@@ -469,7 +469,7 @@ void ExceptionHandler(ExceptionType which) {
       // muc dich: in ra console 1 ki tu char
       char c = (char)kernel->machine->ReadRegister(4); // Doc ki tu tu thanh ghi r4
 			kernel->synchConsoleOut->Write(&c, 1); // In ky tu tu bien c, 1 byte
-			//IncreasePC();
+			
       increasePC();
       return;
     }
@@ -578,6 +578,53 @@ void ExceptionHandler(ExceptionType which) {
       increasePC();
       break;
     }
+    case SC_Seek:
+		{
+			// Input: Vi tri(int), id cua file(OpenFileID)
+			// Output: -1: Loi, Vi tri thuc su: Thanh cong
+			// Cong dung: Di chuyen con tro den vi tri thich hop trong file voi tham so la vi tri can chuyen va id cua file
+			int pos = kernel->machine->ReadRegister(4); // Lay vi tri can chuyen con tro den trong file
+			int id = kernel->machine->ReadRegister(5); // Lay id cua file
+			// Kiem tra id cua file truyen vao co nam ngoai bang mo ta file khong
+			if (id < 0 || id >= 10)
+			{
+				printf("\nKhong the seek vi id nam ngoai bang mo ta file.");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+			}
+			// Kiem tra file co ton tai khong
+			if (fileSystem->fileTable[id] == NULL)
+			{
+				printf("\nKhong the seek vi file nay khong ton tai.");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+			}
+			// Kiem tra co goi Seek tren console khong
+			if (id == 0 || id == 1)
+			{
+				printf("\nKhong the seek tren file console.");
+				kernel->machine->WriteRegister(2, -1);
+				increasePC();
+				return;
+			}
+			// Neu pos = -1 thi gan pos = Length nguoc lai thi giu nguyen pos
+			pos = (pos == -1) ? fileSystem->fileTable[id]->Length() : pos;
+			if (pos > fileSystem->fileTable[id]->Length() || pos < 0) // Kiem tra lai vi tri pos co hop le khong
+			{
+				printf("\nKhong the seek file den vi tri nay.");
+				kernel->machine->WriteRegister(2, -1);
+			}
+			else
+			{
+				// Neu hop le thi tra ve vi tri di chuyen thuc su trong file
+				fileSystem->fileTable[id]->Seek(pos);
+				kernel->machine->WriteRegister(2, pos);
+			}
+			increasePC();
+			return;
+		}
     case SC_Read: {
       // Input: buffer(char*), so ky tu(int), id cua file(OpenFileID)
       // Output: -1: Loi, So byte read thuc su: Thanh cong, -2: Thanh cong
@@ -764,13 +811,10 @@ void ExceptionHandler(ExceptionType which) {
       // purpose: doi va block dua tren id
     {
       int pID, result;
-      
-
       pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
       result = pTab->JoinUpdate(pID); // join vao tien trinh cha
       // tra ve ket qua thuc hien
       kernel->machine->WriteRegister(2, result);
-      pTab->ExitUpdate(pID);
       increasePC();
       return;
     }
