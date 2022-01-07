@@ -99,11 +99,11 @@ public:
     if (type == OUTPUT_TYPE) // user ghi-write  kernel -> doc du lieu nay->read
       fileDescriptor = OpenForWrite(name);
     else if (type ==  INPUT_TYPE|| type == READONLY_TYPE)
-      fileDescriptor = OpenForRead(name, FALSE);
+      fileDescriptor = OpenForRead(name, FALSE); // mo file ra va chi doc
     else if (type == READWRITE_TYPE)
-      fileDescriptor = OpenForReadWrite(name, FALSE);
+      fileDescriptor = OpenForReadWrite(name, FALSE); // mo file ra doc hoac ghi
 
-    if (fileDescriptor == -1)
+    if (fileDescriptor == -1) // that bai thi tra ve NULL
       return NULL;
     return new OpenFile(fileDescriptor,type);
   }
