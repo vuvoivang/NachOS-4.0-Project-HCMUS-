@@ -11,7 +11,7 @@
 class PTable
 {
 private:
-	Bitmap *bm;
+	Bitmap *bm;		// bitmap de danh dau
 	PCB		*pcb[MAXPROCESS];
 	int		psize;
 	Semaphore	*bmsem;		//Dung de ngan chan truong hop nap 2 tien trinh cung luc
@@ -26,7 +26,6 @@ public:
 	
 	int GetFreeSlot();		//Tim slot trong de luu thong tin cho tien trinh moi
 	bool IsExist(int pID); 	//Kiem tra co ton tai process ID nay khong
-	
 	void Remove(int pID); 	//Xoa mot processID ra khoi mang quan ly no, khi ma tien trinh nay da ket thuc
 	
 	char* GetFileName(int id);  // Trả về tên của tiến trình

@@ -14,9 +14,11 @@ PCB::PCB(int id) {
   this->numwait = this->exitcode = 0;
   this->thread = NULL;
 
+  // khoi tao semaphore
   this->joinsem = new Semaphore("joinsem", 0);
   this->exitsem = new Semaphore("exitsem", 0);
   this->multex = new Semaphore("multex", 1);
+  // khoi tao fileTale cho moi PCB
   this->fileTable = new FileSystem();
 }
 
@@ -28,7 +30,7 @@ PCB::~PCB() {
   if (multex != NULL)
     delete multex;
   if (thread != NULL) {
-    thread->FreeSpace();
+    thread->FreeSpace(); // giai phong vung nho
     thread->Finish();
   }
   if(fileTable != NULL){
@@ -84,7 +86,7 @@ int PCB::Exec(char *filename, int pID) {
  
 
   // tránh tình trạng nạp 2 tiến trình cùng 1 lúc
-  multex->P();
+  multex->P(); // down multex
 
   thread = new Thread(filename);
 
@@ -96,12 +98,12 @@ int PCB::Exec(char *filename, int pID) {
 
   // set process ID
   thread->processID = pID;
-  parentID = kernel->currentThread->processID;
+  parentID = kernel->currentThread->processID;// cap nhat ID cua tien trinh cha trong pcb
 
   thread->Fork((VoidFunctionPtr)StartProcess_2,
                (void *)pID); // phan than ra then thu 2 de exec
  
-  multex->V();
+  multex->V(); // up multex len tra ve 
   return pID;
 }
 
@@ -112,7 +114,7 @@ void StartProcess_2(int id)
   AddrSpace *space;
   char *fileName = pTab->GetFileName(id);
 
-  space = new AddrSpace(fileName);
+  space = new AddrSpace(fileName); // khoi tao vung nho cho tien trinh
 
   if (space == NULL) {
     printf("\nPCB::Exec : Can't create AddSpace.");
@@ -124,7 +126,7 @@ void StartProcess_2(int id)
   space->InitRegisters();
   space->RestoreState();
 
-  kernel->machine->Run();
+  kernel->machine->Run();// chay tien trinh
 
   ASSERT(FALSE);
 }

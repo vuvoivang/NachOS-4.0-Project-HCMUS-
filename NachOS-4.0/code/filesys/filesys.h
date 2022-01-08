@@ -100,9 +100,9 @@ public:
     else if (type == INPUT_TYPE || type == READONLY_TYPE)
       fileDescriptor = OpenForRead(name, FALSE);
     else if (type == READWRITE_TYPE)
-      fileDescriptor = OpenForReadWrite(name, FALSE);
+      fileDescriptor = OpenForReadWrite(name, FALSE); // mo file ra doc hoac ghi
 
-    if (fileDescriptor == -1)
+    if (fileDescriptor == -1) // that bai thi tra ve NULL
       return NULL;
     return new OpenFile(fileDescriptor, type);
   }
