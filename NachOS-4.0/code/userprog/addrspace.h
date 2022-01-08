@@ -21,9 +21,6 @@
 
 class AddrSpace {
   public:
-    AddrSpace(OpenFile *executable);	// Create an address space,
-					// initializing it with the program
-					// stored in the file "executable"
     AddrSpace(char * filename);			// Create an address space.
     ~AddrSpace();			// De-allocate an address space
 

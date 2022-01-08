@@ -1,11 +1,3 @@
-/////////////////////////////////////////////////
-// 	DH KHTN - DHQG TPHCM			/
-// 	1512034 Nguyen Dang Binh		/
-// 	1512042 Nguyen Thanh Chung		/
-// 	1512123 Hoang Ngoc Duc			/
-/////////////////////////////////////////////////
-
-
 #ifndef STABLE_H
 #define STABLE_H
 #include "synch.h"
@@ -22,7 +14,6 @@ private:
 	Semaphore* sem;		// Tao semaphore de quan ly
 public:
 	// Khoi tao doi tuong Sem. Gan gia tri ban dau la null
-	// Nho khoi tao sem su dung
 	Sem(char* na, int i)
 	{
 		strcpy(this->name, na);
@@ -45,7 +36,7 @@ public:
 		sem->V();	// Up(sem)
 	}
 	
-	char* GetName()
+	char* getName()
 	{
 		return this->name;
 	}
@@ -54,26 +45,23 @@ public:
 class STable
 {
 private:
-	Bitmap* bm;	// quản lý slot trống
-	Sem* semTab[MAX_SEMAPHORE];	// quản lý tối đa 10 đối tượng Sem
+	Bitmap* bm;	// quan ly slot
+	Sem* semTab[MAX_SEMAPHORE];	// quan ly 10 semaphore
 public:
-	//khởi tạo size đối tượng Sem để quản lý 10 Semaphore. Gán giá trị ban đầu là null
-	// nhớ khởi tạo bm để sử dụng
 	STable();		
 
-	~STable();	// hủy các đối tượng đã tạo
-	// Kiểm tra Semaphore “name” chưa tồn tại thì tạo Semaphore mới. Ngược lại, báo lỗi.
+	~STable();
+	// neu ton tai semaphore "name" thi bao loi, neu chua thi tao Semaphore moi
 	int Create(char *name, int init);
 
-	// Nếu tồn tại Semaphore “name” thì gọi this->P()để thực thi. Ngược lại, báo lỗi.
+	// neu ton tai semaphore "name" thi goi this->P() de thuc thi, nguoc lai bao loi
 	int Wait(char *name);
 
-	// Nếu tồn tại Semaphore “name” thì gọi this->V()để thực thi. Ngược lại, báo lỗi.
+	// neu ton tai semaphore "name" thi goi this->V() de thuc thi, nguoc lai bao loi
 	int Signal(char *name);
 	
-	// Tìm slot trống.
+	// tim slot trong
 	int FindFreeSlot();
-
 	
 };
 #endif // STABLE_H
