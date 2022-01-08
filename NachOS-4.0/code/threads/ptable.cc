@@ -7,16 +7,19 @@ PTable::PTable(int size) {
   // khoi tao bm va bmsem de su dung
   bm = new Bitmap(size);
   bmsem = new Semaphore("Bitmapsem", 1);
+  // khoi tao NULL cho moi con tro PCB
   for (i = 0; i < MAXPROCESS; i++)
     pcb[i] = NULL;
     
 
   bm->Mark(0);
 
+  // for main process
   pcb[0] = new PCB(0);
   pcb[0]->parentID = -1;
 }
 
+// set file nam for main thread
 void PTable::SetFileNameMainThread(char *filename) {
   pcb[0]->SetFileName(filename);
 }
@@ -38,29 +41,29 @@ PTable::~PTable() {
 //--------------------------------------------------------------------
 
 int PTable::ExecUpdate(char *filename) {
-  // khong cho phep nap 2 tien trinh 1 luc
+  // Khong cho phep nap 2 tien trinh 1 luc
   bmsem->P();
 
   if (filename == NULL) {
-    printf("\nPTable::Exec : Can't not execute name is NULL.\n");
+    printf("\nCan't not execute name is NULL.\n");
     bmsem->V();
     return -1;
   }
 
   // Kiem tra chuong trinh duoc goi co la chinh no hay khong
   if (strcmp(filename, kernel->currentThread->getName()) == 0) {
-    printf("\nPTable::Exec : Khong duoc phep goi chinh no !!!\n");
+    printf("\nKhong duoc phep goi chinh no !!!\n");
     bmsem->V();
     return -1;
   }
 
-  // Kiem tra mo file
-  
+  // lay fileSystem cua current thread de mo file
   FileSystem* fileSystem = pTab->getFileTable(kernel->currentThread->processID);
   OpenFile *fileOpen = fileSystem->Open(filename);
+  // Kiem tra mo file
   // Khong mo duoc
   if (fileOpen == NULL) {
-    printf("\nPTable::Exec : Can't open file %s\n", filename);
+    printf("\nKhong the mo file nay %s\n", filename);
     bmsem->V();
     return -1;
   }
@@ -69,7 +72,7 @@ int PTable::ExecUpdate(char *filename) {
   int idSlot = GetFreeSlot();
 
   if (idSlot == -1) {
-    printf("\nPTable::Exec : Khong con slot trong !!!\n");
+    printf("\nKhong con slot trong !!!\n");
     bmsem->V();
     return -1;
   }
@@ -92,11 +95,10 @@ int PTable::ExecUpdate(char *filename) {
 }
 
 int PTable::ExitUpdate(int exitCode) {
-  // Kiem tra pID co ton tai khong
 
+  // Kiem tra pID co ton tai khong
   int processID = kernel->currentThread->processID;
 
-  // Doi 1 chut so voi code, theo pdf
 
   // Main process: goi Halt
   if (processID == 0) {
@@ -114,9 +116,9 @@ int PTable::ExitUpdate(int exitCode) {
   pcb[pcb[processID]->parentID]->DecNumWait();
 
   // JoinRelease va ExitWait de giai phong su cho doi cho tien trinh cha va xin
-  // phep ket thuc giai phong su cho doi cua tien trinh cha
+  // phep ket thuc 
   pcb[processID]->JoinRelease();
-  // Xin phep tien trinh cha ket thuc
+  // Xin phep tien trinh cha cho ket thuc
   pcb[processID]->ExitWait();
   Remove(processID);
   kernel->currentThread->FreeSpace();
@@ -141,18 +143,19 @@ int PTable::JoinUpdate(int pID) {
   // Tien trinh hien tai co la cha cua tien trinh join
   if (kernel->currentThread->processID != pcb[pID]->parentID) {
     printf(
-        "\nLoi: Ko duoc phep join vao tien trinh khong phai cha cua no !!!\n");
+        "\nKo duoc phep join vao tien trinh khong phai cha cua no !!!\n");
     return -1;
   }
   // Tang numwait
   pcb[pcb[pID]->parentID]->IncNumWait();
   
-  pcb[pID]->JoinWait(); // Tien trinh cha cho doi cho den khi tien trinh con ket
-                        // thuc
+  pcb[pID]->JoinWait(); // Tien trinh cha cho doi cho den khi tien trinh con ket thuc
+                        
 
   int exitCode = pcb[pID]->GetExitCode();
 
   pcb[pID]->ExitRelease(); // cho phep tien trinh con ket thuc
+
   // tra ve exit code
   return exitCode;
 }
