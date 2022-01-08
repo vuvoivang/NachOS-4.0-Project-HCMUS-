@@ -122,8 +122,7 @@ int System2User(int virtAddr, int len, char *buffer) {
 void ExceptionHandler(ExceptionType which) {
   int type = kernel->machine->ReadRegister(2);
   DEBUG(dbgSys, "Received Exception " << which << " type: " << type << "\n");
-  FileSystem* fileSystem = pTab->getFileTable(kernel->currentThread->processID);
-  
+  FileSystem *fileSystem = pTab->getFileTable(kernel->currentThread->processID);
 
   switch (which) {
   case NoException:
@@ -373,13 +372,18 @@ void ExceptionHandler(ExceptionType which) {
       // output None
 
       int virtAddr;
-			char* buffer;
-			virtAddr = kernel->machine->ReadRegister(4); // Lay dia chi cua tham so buffer
-			buffer = User2System(virtAddr, 255); // Copy chuoi tu vung nho user space sang system space 
-			int length = 0;
-			while (buffer[length] != 0) length++; // Dem do dai that su cua chuoi
-			kernel->synchConsoleOut->Write(buffer, length + 1); // Goi ham Write cua SynchConsoleOutput de in string ra man hinh
-      delete buffer; 
+      char *buffer;
+      virtAddr =
+          kernel->machine->ReadRegister(4); // Lay dia chi cua tham so buffer
+      buffer = User2System(
+          virtAddr, 255); // Copy chuoi tu vung nho user space sang system space
+      int length = 0;
+      while (buffer[length] != 0)
+        length++; // Dem do dai that su cua chuoi
+      kernel->synchConsoleOut->Write(
+          buffer, length + 1); // Goi ham Write cua SynchConsoleOutput de in
+                               // string ra man hinh
+      delete buffer;
       increasePC();
       return;
     }
@@ -461,8 +465,8 @@ void ExceptionHandler(ExceptionType which) {
     case SC_PrintChar: {
       char c = (char)kernel->machine->ReadRegister(4); // doc ky tu c truyen vao
       // in ra man hinh console output
-			kernel->synchConsoleOut->Write(&c, 1); 
-			
+      kernel->synchConsoleOut->Write(&c, 1);
+
       increasePC();
       return;
     }
@@ -473,34 +477,28 @@ void ExceptionHandler(ExceptionType which) {
       // muc dich: tao file voi filename duoc truyen vao
       int virAddr;
       char *filename;
-      DEBUG(dbgFile, "\n SC_CreateFile call ...");
-      DEBUG(dbgFile, "\n Reading virtual address of filename");
 
       virAddr = kernel->machine->ReadRegister(4);
-      DEBUG(dbgFile, "\n Reading filename.");
       filename = User2System(virAddr, MAX_LENGTH_FILENAME);
       if (filename == NULL) {
-        printf("\n Not enough memory in system");
-        DEBUG(dbgFile, "\n Not enough memory in system");
-        kernel->machine->WriteRegister(
-            2, -1); // tra ve Loi cho chuong trinh nguoi dung
+        printf("\n Khong du bo nho !!");
+        kernel->machine->WriteRegister(2, -1); // that bai
         increasePC();
         return;
       }
-      DEBUG(dbgFile, "\n Finish reading filename.");
 
       // create file
       if (!fileSystem->Create(filename)) {
         printf("\n Error create file '%s'", filename);
         kernel->machine->WriteRegister(2, -1);
-        delete filename;
+        delete[] filename;
         increasePC();
         return;
       }
 
       // create file thanh cong
       kernel->machine->WriteRegister(2, 0);
-      delete filename;
+      delete[] filename;
       increasePC();
       return;
     }
@@ -526,10 +524,9 @@ void ExceptionHandler(ExceptionType which) {
         // output console stdout -> system xuat ra cho nguoi dung xem tren
         // console
         kernel->machine->WriteRegister(2, 1);
-      }
-      else if (freeSlot != -1) {
+      } else if (freeSlot != -1) {
         file = fileSystem->Open(fileName, type);
-       
+
         if (file != NULL) {
           fileSystem->fileTable[freeSlot] = file; 
           kernel->machine->WriteRegister(2, freeSlot); // mo file thanh cong
@@ -549,8 +546,8 @@ void ExceptionHandler(ExceptionType which) {
       file_Id = -1; 
       file_Id = kernel->machine->ReadRegister(4);//doc tu thanh ghi
 
-      if (file_Id >= 2 && file_Id <= MAX_FILE_OPEN-1) {
-        if (fileSystem->fileTable[file_Id] != NULL) { // neu da duoc su dung
+      if (file_Id >= 2 && file_Id <= MAX_FILE_OPEN - 1) {
+        if (fileSystem->fileTable[file_Id] != NULL) {
 
           delete fileSystem->fileTable[file_Id]; // xoa danh dau trong fileTable
 
@@ -571,65 +568,60 @@ void ExceptionHandler(ExceptionType which) {
       increasePC();
       break;
     }
-    case SC_Seek:
-		{
-			// Input: vi tri can di chuyen, id cua file
-			// Output: loi: -1, 
+    case SC_Seek: {
+      // Input: vi tri can di chuyen, id cua file
+      // Output: loi: -1,
       // neu vi tri truyen vao: -1 => length of file
       // khac: tra ve vi tri da di chuyen den
 
-			// Purpose: Di chuyen con tro file den 1 vi tri trong file
-			int position = kernel->machine->ReadRegister(4); // vi tri chuyen den
-			int id = kernel->machine->ReadRegister(5); // id file
+      // Purpose: Di chuyen con tro file den 1 vi tri trong file
+      int position = kernel->machine->ReadRegister(4); // vi tri chuyen den
+      int id = kernel->machine->ReadRegister(5);       // id file
 
-			// Kiem tra id co nam ngoai bang mo ta file
-			if (id < 0 || id >= MAX_FILE_OPEN)
-			{
-				printf("\nLoi di chuyen con tro vi id nam ngoai bang mo ta file.");
-				kernel->machine->WriteRegister(2, -1);
-				increasePC();
-				return;
-			}
-			// Kiem tra file co ton tai khong
-			if (fileSystem->fileTable[id] == NULL)
-			{
-				printf("\nLoi di chuyen con tro vi file nay khong ton tai.");
-				kernel->machine->WriteRegister(2, -1);
-				increasePC();
-				return;
-			}
-			// Seek voi cac file console
-			if (id == 0 || id == 1)
-			{
-				printf("\nLoi di chuyen con tro tren file console.");
-				kernel->machine->WriteRegister(2, -1);
-				increasePC();
-				return;
-			}
-			// position == -1, tra ve length
-      if(position == -1){
+      // Kiem tra id co nam ngoai bang mo ta file
+      if (id < 0 || id >= MAX_FILE_OPEN) {
+        printf("\nLoi di chuyen con tro vi id nam ngoai bang mo ta file.");
+        kernel->machine->WriteRegister(2, -1);
+        increasePC();
+        return;
+      }
+      // Kiem tra file co ton tai khong
+      if (fileSystem->fileTable[id] == NULL) {
+        printf("\nLoi di chuyen con tro vi file nay khong ton tai.");
+        kernel->machine->WriteRegister(2, -1);
+        increasePC();
+        return;
+      }
+      // Seek voi cac file console
+      if (id == 0 || id == 1) {
+        printf("\nLoi di chuyen con tro tren file console.");
+        kernel->machine->WriteRegister(2, -1);
+        increasePC();
+        return;
+      }
+      // position == -1, tra ve length
+      if (position == -1) {
         position = fileSystem->fileTable[id]->Length();
       }
-			if (position > fileSystem->fileTable[id]->Length() || position < 0) // Kiem tra vi tri hop le
-			{
-				printf("\nLoi di chuyen con tro file den vi tri nay.");
-				kernel->machine->WriteRegister(2, -1);
-			}
-			else
-			{
-				// Di chuyen file thanh cong
-				fileSystem->fileTable[id]->Seek(position);
-				kernel->machine->WriteRegister(2, position);
-			}
-			increasePC();
-			return;
-		}
+      if (position > fileSystem->fileTable[id]->Length() ||
+          position < 0) // Kiem tra vi tri hop le
+      {
+        printf("\nLoi di chuyen con tro file den vi tri nay.");
+        kernel->machine->WriteRegister(2, -1);
+      } else {
+        // Di chuyen file thanh cong
+        fileSystem->fileTable[id]->Seek(position);
+        kernel->machine->WriteRegister(2, position);
+      }
+      increasePC();
+      return;
+    }
     case SC_Read: {
       // Input: buffer(char*), so ky tu(int), id cua file(OpenFileID)
       // Output: -1: Loi, So byte read thuc su: Thanh cong, -2: Thanh cong
       // Cong dung: Doc file voi tham so la buffer, so ky tu cho phep va id cua
       // file
-      
+
       int virAddr;   // chua dia chi chuoi buffer
       int charcount; // chua charcount la so ky tu duoc doc
       int id;        // id cua file
@@ -645,7 +637,7 @@ void ExceptionHandler(ExceptionType which) {
       charcount = kernel->machine->ReadRegister(5);
       DEBUG(dbgFile, "\n Reading id.");
       id = kernel->machine->ReadRegister(6);
-      
+
       // Kiem tra file id co hop le
       if (id < 0 || id > MAX_FILE_OPEN) {
         printf("\nInvalid file id.");
@@ -671,8 +663,9 @@ void ExceptionHandler(ExceptionType which) {
       }
 
       // Truong hop file doc duoc
-     
-      curPosition = fileSystem->fileTable[id]->getCurrentOffset(); // Lay vi tri current position
+
+      curPosition = fileSystem->fileTable[id]
+                        ->getCurrentOffset(); // Lay vi tri current position
       buffer = new char[charcount];           //
 
       // Truong hop doc file stdin (id la 0)
@@ -681,9 +674,9 @@ void ExceptionHandler(ExceptionType which) {
         // Su dung ham Read cua lop SynchConsole de doc max charcount byte ->
         // bufffer
         // tra ve so byte thuc su doc duoc
-        
+
         int size = kernel->synchConsoleIn->Read(buffer, charcount);
-      
+
         System2User(virAddr, size,
                     buffer); // Copy chuoi tu vung nho System Space (buffer)
                              // sang User Space (virAddr) voi buffer co do dai
@@ -764,12 +757,14 @@ void ExceptionHandler(ExceptionType which) {
         return;
       }
 
-      curPosition = fileSystem->fileTable[id]->getCurrentOffset(); // Kiem tra thanh cong thi lay vi
+      curPosition = fileSystem->fileTable[id]
+                        ->getCurrentOffset(); // Kiem tra thanh cong thi lay vi
                                               // tri curPosition
-      buffer = User2System(virAddr,charcount); // Copy vung nho User Space sang System space voi buffer dai charcount bytes
-                                       
-      
-      if (id == INDEX_STDOUT)          // Xet truong hop file stdout
+      buffer = User2System(virAddr,
+                           charcount); // Copy vung nho User Space sang System
+                                       // space voi buffer dai charcount bytes
+
+      if (id == INDEX_STDOUT) // Xet truong hop file stdout
       {
         int pos = 0;
         while (buffer[pos] != '\0') {
@@ -782,7 +777,8 @@ void ExceptionHandler(ExceptionType which) {
           pos++;
         }
 
-        kernel->machine->WriteRegister(2, pos - 1); // Tra ve so byte thuc su write duoc
+        kernel->machine->WriteRegister(
+            2, pos - 1); // Tra ve so byte thuc su write duoc
         delete buffer;
         increasePC();
         return;
@@ -802,163 +798,166 @@ void ExceptionHandler(ExceptionType which) {
       }
     }
     case SC_Join:
-    // input: SpaceID id
-    // output: exit code cho tien trinh da dang block, err: -1
-    // purpose: doi va block dua tren id
-    {
-      int pID, result;
-      pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
-      result = pTab->JoinUpdate(pID); // join vao tien trinh cha
-      // tra ve ket qua thuc hien
-      kernel->machine->WriteRegister(2, result);
+      // input: SpaceID id
+      // output: exit code cho tien trinh da dang block, err: -1
+      // purpose: doi va block dua tren id
+      {
+        int pID, result;
+        pID = kernel->machine->ReadRegister(4); // doc SpaceID id tu r4
+        result = pTab->JoinUpdate(pID);         // join vao tien trinh cha
+        // tra ve ket qua thuc hien
+        kernel->machine->WriteRegister(2, result);
+        increasePC();
+        return;
+      }
+    case SC_Exec: {
+      int virtAddr;
+      char *name;
+      OpenFile *oFile;
+      int id;
+      virtAddr = kernel->machine->ReadRegister(
+          4); // doc dia chi ten chuong trinh tu thanh ghi r4
+
+      name =
+          User2System(virtAddr, MAX_LENGTH_FILENAME +
+                                    1); // Lay ten chuong trinh, nap vao kernel
+
+      if (name == NULL) {
+        DEBUG('a', "\n Not enough memory in System");
+        printf("\n Not enough memory in System");
+        kernel->machine->WriteRegister(2, -1);
+        increasePC();
+        return;
+      }
+      oFile = fileSystem->Open(name);
+      if (oFile == NULL) {
+        printf("\nExec:: Can't open this file.");
+        kernel->machine->WriteRegister(2, -1);
+        increasePC();
+        return;
+      }
+
+      delete oFile;
+
+      // Return child process id
+      id = pTab->ExecUpdate(name);
+      kernel->machine->WriteRegister(2, id);
+
+      delete[] name;
       increasePC();
       return;
     }
-    case SC_Exec:
-    {
-      int virtAddr;
-      char* name;
-      OpenFile *oFile;
-      int id;
-			virtAddr = kernel->machine->ReadRegister(4);	// doc dia chi ten chuong trinh tu thanh ghi r4
-			
-			name = User2System(virtAddr, MAX_LENGTH_FILENAME + 1); // Lay ten chuong trinh, nap vao kernel
-	
-			if(name == NULL)
-			{
-				DEBUG('a', "\n Not enough memory in System");
-				printf("\n Not enough memory in System");
-				kernel->machine->WriteRegister(2, -1);
-				increasePC();
-				return;
-			}
-			oFile = fileSystem->Open(name);
-			if (oFile == NULL)
-			{
-				printf("\nExec:: Can't open this file.");
-				kernel->machine->WriteRegister(2,-1);
-				increasePC();
-				return;
-			}
-
-			delete oFile;
-
-			// Return child process id
-			id = pTab->ExecUpdate(name); 
-			kernel->machine->WriteRegister(2,id);
-
-			delete[] name;	
-			increasePC();
-			return;
-
-    }
-    
-    
 
     case SC_Exit: {
       // input: exit code
       // output: exit code cho tien trinh da join. Thanh cong: 0, err: exit code
-      int exitStatus,result;
+      int exitStatus, result;
       exitStatus = kernel->machine->ReadRegister(4);
       result = pTab->ExitUpdate(exitStatus);
-      //kernel->machine->WriteRegister(2, result);
+      // kernel->machine->WriteRegister(2, result);
 
       increasePC();
       return;
     }
     case SC_CreateSemaphore: {
-      // int CreateSemaphore(char* name, int semval).
+      // Input: char* name, int semval
+      // Output: 0: thanh cong, -1: that bai
+      // Muc dich: tao semaphore
       int virtAddr = kernel->machine->ReadRegister(4);
       int semval = kernel->machine->ReadRegister(5);
 
+      // get name
       char *name = User2System(virtAddr, MAX_LENGTH_FILENAME + 1);
       if (name == NULL) {
-        DEBUG('a', "\n Not enough memory in System");
-        printf("\n Not enough memory in System");
+        printf("\n Khong du bo nho!!");
         kernel->machine->WriteRegister(2, -1);
-        delete name;
         increasePC();
         return;
       }
 
+      // tao semaphore
       int res = sTab->Create(name, semval);
 
+      // that bai
       if (res == -1) {
-        DEBUG('a', "\n Khong the khoi tao semaphore");
         printf("\n Khong the khoi tao semaphore");
         kernel->machine->WriteRegister(2, -1);
-        delete name;
+        delete[] name;
         increasePC();
         return;
       }
 
-      delete name;
+      // thanh cong
       kernel->machine->WriteRegister(2, res);
+      delete[] name;
       increasePC();
       return;
     }
 
     case SC_Wait: {
-      // int Wait(char* name)
+      // Input: char* name
+      // Output: 0: thanh cong, -1: that bai
+      // Muc dich: wait semaphore
       int virtAddr = kernel->machine->ReadRegister(4);
 
+      // get name
       char *name = User2System(virtAddr, MAX_LENGTH_FILENAME + 1);
       if (name == NULL) {
-        DEBUG('a', "\n Not enough memory in System");
-        printf("\n Not enough memory in System");
+        printf("\n Khong du bo nho!!");
         kernel->machine->WriteRegister(2, -1);
-        delete name;
         increasePC();
         return;
       }
 
+      // wait semaphore
       int res = sTab->Wait(name);
 
+      // that bai
       if (res == -1) {
-        DEBUG('a', "\n Khong ton tai ten semaphore nay!");
         printf("\n Khong ton tai ten semaphore nay!");
         kernel->machine->WriteRegister(2, -1);
-        delete name;
+        delete[] name;
         increasePC();
         return;
       }
-
-      delete name;
+      // thanh cong
+      delete[] name;
       kernel->machine->WriteRegister(2, res);
       increasePC();
       return;
     }
     case SC_Signal: {
-      // int Signal(char* name)
+      // Input: char* name
+      // Output: 0: thanh cong, -1: that bai
+      // Muc dich: wait semaphore
       int virtAddr = kernel->machine->ReadRegister(4);
 
       char *name = User2System(virtAddr, MAX_LENGTH_FILENAME + 1);
       if (name == NULL) {
-        DEBUG('a', "\n Not enough memory in System");
-        printf("\n Not enough memory in System");
+        printf("\n Khong du bo nho!!");
         kernel->machine->WriteRegister(2, -1);
-        delete name;
         increasePC();
         return;
       }
-
+      // signal semaphore
       int res = sTab->Signal(name);
 
+      // that bai
       if (res == -1) {
-        DEBUG('a', "\n Khong ton tai ten semaphore nay!");
         printf("\n Khong ton tai ten semaphore nay!");
         kernel->machine->WriteRegister(2, -1);
-        delete name;
+        delete[] name;
         increasePC();
         return;
       }
 
-      delete name;
+      // thanh cong
       kernel->machine->WriteRegister(2, res);
+      delete[] name;
       increasePC();
       return;
     }
-    
+
     default:
       cerr << "Unexpected system call " << type << "\n";
       break;

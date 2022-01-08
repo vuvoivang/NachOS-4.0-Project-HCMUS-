@@ -15,8 +15,8 @@ int WriteToStudent(int fID_input, int fID_output);
 int main() {
 
   int fID_input, fID_output, fID_student, fID_result; // id of file
-  int num;                                            // number of times considered
-  char c;                                             // char read from file
+  int num; // number of times considered
+  char c;  // char read from file
   //-----------------------------------------------------------
 
   if (Create4Semaphore() == -1)
