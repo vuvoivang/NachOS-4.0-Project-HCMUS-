@@ -62,7 +62,6 @@ public:
 	
 	// tim slot trong
 	int FindFreeSlot();
-
 	
 };
 #endif // STABLE_H
