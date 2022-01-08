@@ -38,12 +38,12 @@
 #include "sysdep.h"
 
 #define MAX_FILE_OPEN 10
-#define INPUT_TYPE 1 
+#define INPUT_TYPE 1
 #define OUTPUT_TYPE 0
 #define READONLY_TYPE 3
 #define READWRITE_TYPE 2
-#define INDEX_STDIN 1  
-#define INDEX_STDOUT 0 
+#define INDEX_STDIN 1
+#define INDEX_STDOUT 0
 #ifdef FILESYS_STUB
 // #ifdef FILESYS_STUB // Temporarily implement file system calls as
 // calls to UNIX, until the real file system
@@ -74,7 +74,7 @@ public:
     delete[] fileTable;
   }
 
-  // default method
+  // create file
   bool Create(char *name) {
     int fileDescriptor = OpenForWrite(name);
 
@@ -97,14 +97,14 @@ public:
 
     if (type == OUTPUT_TYPE) // user ghi-write  kernel -> doc du lieu nay->read
       fileDescriptor = OpenForWrite(name);
-    else if (type ==  INPUT_TYPE|| type == READONLY_TYPE)
-      fileDescriptor = OpenForRead(name, FALSE); // mo file ra va chi doc
+    else if (type == INPUT_TYPE || type == READONLY_TYPE)
+      fileDescriptor = OpenForRead(name, FALSE);
     else if (type == READWRITE_TYPE)
       fileDescriptor = OpenForReadWrite(name, FALSE); // mo file ra doc hoac ghi
 
     if (fileDescriptor == -1) // that bai thi tra ve NULL
       return NULL;
-    return new OpenFile(fileDescriptor,type);
+    return new OpenFile(fileDescriptor, type);
   }
 
   // tim slot trong
@@ -115,7 +115,7 @@ public:
 
     return -1;
   }
-  // default method
+  
   bool Remove(char *name) { return Unlink(name) == 0; }
 };
 

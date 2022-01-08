@@ -1,9 +1,7 @@
 #include "ptable.h"
 #include "main.h"
 
-PTable::PTable(int size)
-{
-  // khoi ptable
+PTable::PTable(int size) {
   int i = 0;
   psize = size;
   // khoi tao bm va bmsem de su dung
@@ -12,6 +10,7 @@ PTable::PTable(int size)
   // khoi tao NULL cho moi con tro PCB
   for (i = 0; i < MAXPROCESS; i++)
     pcb[i] = NULL;
+    
 
   bm->Mark(0);
 
@@ -25,8 +24,7 @@ void PTable::SetFileNameMainThread(char *filename) {
   pcb[0]->SetFileName(filename);
 }
 
-PTable::~PTable()
-{
+PTable::~PTable() {
 
   int i = 0;
   if (bm != NULL)
@@ -89,6 +87,7 @@ int PTable::ExecUpdate(char *filename) {
   bm->Mark(idSlot);
 
   int processID = pcb[idSlot]->Exec(filename, idSlot);
+ 
 
   delete fileOpen;
   bmsem->V();
@@ -102,15 +101,13 @@ int PTable::ExitUpdate(int exitCode) {
 
 
   // Main process: goi Halt
-  if (processID == 0)
-  {
+  if (processID == 0) {
     kernel->currentThread->FreeSpace();
     kernel->interrupt->Halt();
     return 0;
   }
 
-  if (!IsExist(processID))
-  {
+  if (!IsExist(processID)) {
     printf("\nTien trinh khong ton tai !!!\n");
     return -1;
   }
@@ -129,26 +126,22 @@ int PTable::ExitUpdate(int exitCode) {
   return exitCode;
 }
 
-int PTable::JoinUpdate(int pID)
-{
+int PTable::JoinUpdate(int pID) {
 
-  if (!IsExist(pID))
-  {
+  if (!IsExist(pID)) {
     printf("Khong ton tai process id nay! %d\n", pID);
     return -1;
   }
 
   // Kiem tra tien trinh join vao chinh no
-  if (kernel->currentThread->processID == pID)
-  {
+  if (kernel->currentThread->processID == pID) {
     printf("\nTien trinh khong duoc join vao chinh no !!!\n");
     return -1;
   }
 
   // Khi tien trinh join hop le
   // Tien trinh hien tai co la cha cua tien trinh join
-  if (kernel->currentThread->processID != pcb[pID]->parentID)
-  {
+  if (kernel->currentThread->processID != pcb[pID]->parentID) {
     printf(
         "\nKo duoc phep join vao tien trinh khong phai cha cua no !!!\n");
     return -1;
@@ -167,33 +160,28 @@ int PTable::JoinUpdate(int pID)
   return exitCode;
 }
 
-int PTable::GetFreeSlot()
-{
+int PTable::GetFreeSlot() {
   // Tim slot de luu thong tin cho tien trinh moi
   return bm->FindAndSet();
 }
 
-bool PTable::IsExist(int pID)
-{
+bool PTable::IsExist(int pID) {
   if (pID < 0 || pID >= MAXPROCESS)
     return 0;
   return bm->Test(pID);
 }
 
-void PTable::Remove(int pID)
-{
+void PTable::Remove(int pID) {
   // Xoa process co id la pID ra khoi PTable
   if (pID < 0 || pID >= MAXPROCESS)
     return;
-  if (bm->Test(pID))
-  {
+  if (bm->Test(pID)) {
     bm->Clear(pID);
     delete pcb[pID];
   }
 }
 char *PTable::GetFileName(int id) { return (pcb[id]->GetFileName()); }
 
-FileSystem *PTable::getFileTable(int id)
-{
+FileSystem* PTable::getFileTable(int id){
   return pcb[id]->fileTable;
 }
