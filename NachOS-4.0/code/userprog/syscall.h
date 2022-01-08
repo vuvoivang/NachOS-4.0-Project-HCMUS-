@@ -127,8 +127,8 @@ typedef int OpenFileId;
  * the console device.
  */
 
-#define ABC_ConsoleInput	0  
-#define ABC_ConsoleOutput	1  
+#define Type_ConsoleInput	1 
+#define Type_ConsoleOutput	0  
 #define ReadWrite 2
 #define ReadOnly 3
 

@@ -29,8 +29,7 @@ public:
 	void Remove(int pID); 	//Xoa mot processID ra khoi mang quan ly no, khi ma tien trinh nay da ket thuc
 	
 	char* GetFileName(int id);  // Trả về tên của tiến trình
-	void SetFileNameMainThread(char* filename);
-	
-	FileSystem* getFileTable(int id); // tra ve fileTable voi id tuong ung
+	void SetFileNameMainThread(char* filename); // set filename cho main thread
+	FileSystem* getFileTable(int id); // tra ve fileSystem tuong ung voi id cua process
 };
 #endif

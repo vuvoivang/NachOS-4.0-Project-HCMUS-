@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = add halt shell matmult sort segments printString readString readNum printNum randomNum readChar printChar help ascii my_sort createFile openFile closeFile readFile ping pong scheduler student watertap watersystem_main
+PROGRAMS = add halt shell matmult sort segments printString readString readNum printNum randomNum readChar printChar help ascii my_sort createFile openFile closeFile readWriteFile readWriteConsole student watertap watersystem_main 
 endif
 
 all: $(PROGRAMS)
@@ -236,34 +236,17 @@ closeFile: closeFile.o start.o
 	$(LD) $(LDFLAGS) start.o closeFile.o -o closeFile.coff
 	$(COFF2NOFF) closeFile.coff closeFile
 
-readFile.o: readFile.c
-	$(CC) $(CFLAGS) -c readFile.c
-readFile: readFile.o start.o
-	$(LD) $(LDFLAGS) start.o readFile.o -o readFile.coff
-	$(COFF2NOFF) readFile.coff readFile
+readWriteFile.o: readWriteFile.c
+	$(CC) $(CFLAGS) -c readWriteFile.c
+readWriteFile: readWriteFile.o start.o
+	$(LD) $(LDFLAGS) start.o readWriteFile.o -o readWriteFile.coff
+	$(COFF2NOFF) readWriteFile.coff readWriteFile
 
-
-
-ping.o: ping.c
-	$(CC) $(CFLAGS) -c ping.c
-ping: ping.o start.o
-	$(LD) $(LDFLAGS) start.o ping.o -o ping.coff
-	$(COFF2NOFF) ping.coff ping
-
-
-
-pong.o: pong.c
-	$(CC) $(CFLAGS) -c pong.c
-pong: pong.o start.o
-	$(LD) $(LDFLAGS) start.o pong.o -o pong.coff
-	$(COFF2NOFF) pong.coff pong
-
-
-scheduler.o: scheduler.c
-	$(CC) $(CFLAGS) -c scheduler.c
-scheduler: scheduler.o start.o
-	$(LD) $(LDFLAGS) start.o scheduler.o -o scheduler.coff
-	$(COFF2NOFF) scheduler.coff scheduler
+readWriteConsole.o: readWriteConsole.c
+	$(CC) $(CFLAGS) -c readWriteConsole.c
+readWriteConsole: readWriteConsole.o start.o
+	$(LD) $(LDFLAGS) start.o readWriteConsole.o -o readWriteConsole.coff
+	$(COFF2NOFF) readWriteConsole.coff readWriteConsole
 
 student.o: student.c
 	$(CC) $(CFLAGS) -c student.c
@@ -282,6 +265,8 @@ watersystem_main.o: watersystem_main.c
 watersystem_main: watersystem_main.o start.o
 	$(LD) $(LDFLAGS) start.o watersystem_main.o -o watersystem_main.coff
 	$(COFF2NOFF) watersystem_main.coff watersystem_main
+
+
 clean:
 	$(RM) -f *.o *.ii
 	$(RM) -f *.coff
