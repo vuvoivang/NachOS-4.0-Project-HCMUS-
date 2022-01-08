@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = add halt shell matmult sort segments printString readString readNum printNum randomNum readChar printChar help ascii my_sort createFile openFile closeFile readWriteFile readWriteConsole ping pong scheduler student watertap watersystem_main 
+PROGRAMS = add halt shell matmult sort segments printString readString readNum printNum randomNum readChar printChar help ascii my_sort createFile openFile closeFile readWriteFile readWriteConsole student watertap watersystem_main 
 endif
 
 all: $(PROGRAMS)
@@ -247,28 +247,6 @@ readWriteConsole.o: readWriteConsole.c
 readWriteConsole: readWriteConsole.o start.o
 	$(LD) $(LDFLAGS) start.o readWriteConsole.o -o readWriteConsole.coff
 	$(COFF2NOFF) readWriteConsole.coff readWriteConsole
-
-
-ping.o: ping.c
-	$(CC) $(CFLAGS) -c ping.c
-ping: ping.o start.o
-	$(LD) $(LDFLAGS) start.o ping.o -o ping.coff
-	$(COFF2NOFF) ping.coff ping
-
-
-
-pong.o: pong.c
-	$(CC) $(CFLAGS) -c pong.c
-pong: pong.o start.o
-	$(LD) $(LDFLAGS) start.o pong.o -o pong.coff
-	$(COFF2NOFF) pong.coff pong
-
-
-scheduler.o: scheduler.c
-	$(CC) $(CFLAGS) -c scheduler.c
-scheduler: scheduler.o start.o
-	$(LD) $(LDFLAGS) start.o scheduler.o -o scheduler.coff
-	$(COFF2NOFF) scheduler.coff scheduler
 
 student.o: student.c
 	$(CC) $(CFLAGS) -c student.c
