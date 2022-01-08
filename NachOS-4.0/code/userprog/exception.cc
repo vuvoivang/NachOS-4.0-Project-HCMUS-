@@ -510,12 +510,13 @@ void ExceptionHandler(ExceptionType which) {
       int type;
       char *fileName;
       int freeSlot;
+      //doc lenh tu thanh ghi
       virAddr = kernel->machine->ReadRegister(4);
       type = kernel->machine->ReadRegister(5);
 
       fileName = User2System(virAddr, MAX_LENGTH_FILENAME);
 
-      freeSlot = fileSystem->FindFreeSlot();
+      freeSlot = fileSystem->FindFreeSlot(); // kiem freeslot
       if (type == INPUT_TYPE) {
         // input console stdin ->system doc gia tri tren man hinh console
         // thong bao day
@@ -530,8 +531,8 @@ void ExceptionHandler(ExceptionType which) {
         file = fileSystem->Open(fileName, type);
        
         if (file != NULL) {
-          fileSystem->fileTable[freeSlot] = file;
-          kernel->machine->WriteRegister(2, freeSlot);
+          fileSystem->fileTable[freeSlot] = file; 
+          kernel->machine->WriteRegister(2, freeSlot); // mo file thanh cong
         }
         delete[] fileName;
         increasePC();
@@ -545,13 +546,13 @@ void ExceptionHandler(ExceptionType which) {
     }
     case SC_Close: {
       int file_Id;
-      file_Id = -1;
-      file_Id = kernel->machine->ReadRegister(4);
+      file_Id = -1; 
+      file_Id = kernel->machine->ReadRegister(4);//doc tu thanh ghi
 
       if (file_Id >= 2 && file_Id <= MAX_FILE_OPEN-1) {
-        if (fileSystem->fileTable[file_Id] != NULL) {
+        if (fileSystem->fileTable[file_Id] != NULL) { // neu da duoc su dung
 
-          delete fileSystem->fileTable[file_Id];
+          delete fileSystem->fileTable[file_Id]; // xoa danh dau trong fileTable
 
           fileSystem->fileTable[file_Id] = NULL;
 
