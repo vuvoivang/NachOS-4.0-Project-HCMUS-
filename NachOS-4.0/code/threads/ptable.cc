@@ -96,9 +96,8 @@ int PTable::ExecUpdate(char *filename) {
 
 int PTable::ExitUpdate(int exitCode) {
 
-  // Kiem tra pID co ton tai khong
+  
   int processID = kernel->currentThread->processID;
-
 
   // Main process: goi Halt
   if (processID == 0) {
@@ -106,6 +105,8 @@ int PTable::ExitUpdate(int exitCode) {
     kernel->interrupt->Halt();
     return 0;
   }
+  // Kiem tra pID co ton tai khong
+
 
   if (!IsExist(processID)) {
     printf("\nTien trinh khong ton tai !!!\n");

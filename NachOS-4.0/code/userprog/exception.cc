@@ -503,6 +503,9 @@ void ExceptionHandler(ExceptionType which) {
       return;
     }
     case SC_Open: {
+      //input: char*name, int type
+      //output: 0 neu la input,1 la output,id neu thanh cong,-1 neuu that bai
+      //muc dich:mo file
       OpenFile *file;
       int virAddr;
       int type;
@@ -542,6 +545,9 @@ void ExceptionHandler(ExceptionType which) {
       break;
     }
     case SC_Close: {
+      //input : int id
+      // output: 0 thanh cong,1 that bai
+      //muc dich:dong file
       int file_Id;
       file_Id = -1; 
       file_Id = kernel->machine->ReadRegister(4);//doc tu thanh ghi
