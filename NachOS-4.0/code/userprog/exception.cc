@@ -505,6 +505,8 @@ void ExceptionHandler(ExceptionType which) {
       return;
     }
     case SC_Open: {
+      //input:
+      //output:
       OpenFile *file;
       int virAddr;
       int type;
