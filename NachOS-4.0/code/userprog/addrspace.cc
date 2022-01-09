@@ -91,8 +91,7 @@ AddrSpace::AddrSpace(char *filename) {
 
   int numclear = gPhysPageBitmap->NumClear();
 
-  printf("\n\nSize: %d, number of pages: %d, page size: %d\n", size, numPages,
-         PageSize);
+  
 
   if (numPages > numclear) {
     printf("\nAddrSpace::Load : khong du bo nho cho process moi");
@@ -102,8 +101,9 @@ AddrSpace::AddrSpace(char *filename) {
   }
 
   pageTable = new TranslationEntry[numPages];
-
-  printf("Physical pages: ");
+  printf("\n\nSize: %d, number of pages: %d, page size: %d\nPhysical pages: ", size, numPages,
+         PageSize);
+  
 
   for (i = 0; i < numPages; i++) {
     pageTable[i].virtualPage = i;
@@ -114,6 +114,7 @@ AddrSpace::AddrSpace(char *filename) {
     pageTable[i].readOnly = FALSE;
     printf("%d ", pageTable[i].physicalPage);
   }
+  printf("\n");
 
   addrLock->V();
 
